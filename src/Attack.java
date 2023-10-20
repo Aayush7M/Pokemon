@@ -7,7 +7,16 @@ public class Attack {
         this.description = description;
         this.damage = damage;
     }
+    public void setName (String name) {
+        this.name = name;
+    }
+    public void setDescription (String description) {
+        this.description = description;
+    }
+    public void setDamage (String damage) {
+        this.damage = damage;
+    }
     public String toString () {
-        return String.format("")
+        return String.format("Name: %s%nDescription: %s%nDamage: %s%n",name,description,damage);
     }
 }

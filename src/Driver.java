@@ -6,12 +6,12 @@ public class Driver {
         System.out.println("Welcome!");
         boolean moreAlbumsToAdd = true;
         ArrayList <Album> albums = new ArrayList <>();
-        ArrayList <Integer> albumNums = new ArrayList<>();
         Scanner in = new Scanner(System.in);
         do {
-            getAlbum(in, albums, albumNums, false);
+            importAlbum(in, albums, false);
         } while (getChar(in, "Would you like to add more albums?") == 'y');
 
+        Collections.sort(albums);
         int mainMenuChoice;
         while ((mainMenuChoice = displayMenu(in, 0)) != 3) { // loop until exit
             if (mainMenuChoice == 1) {
@@ -59,46 +59,127 @@ public class Driver {
         int choice;
         while ((choice = displayMenu(in, 1)) != 6) {
             switch(choice) {
-                case 1:
-                    System.out.println("Here are all the albums: ");
+                case 1: // Display a list of all albums
                     printAllAlbums(albums);
                     break;
-                case 2:
-                    // code block
+                case 2: // Display info on a particular album
+                    printAlbum(in, albums);
                     break;
-                case 3:
-                    // code block
+                case 3: // Add an album
+                    importAlbum(in, albums, true);
                     break;
-                case 4:
-                    // code
+                case 4: // Remove an album
+                    removeAlbum(in, albums);
                     break;
-                case 5:
-                    // code
+                case 5: // Show statistics
+                    printStatistics(albums);
             }
         }
     }
 
-    public static void subMenuTwo (Scanner in) {
-
+    public static void subMenuTwo (Scanner in, ArrayList <Album> albums) {
+        int choice;
+        while ((choice = displayMenu(in, 1)) != 7) {
+            printAllAlbums(albums);
+            int albumIndex = getAlbumIndex(in,albums);
+            switch(choice) {
+                case 1: // Display all cards (in the last sorted order)
+                    // code
+                    break;
+                case 2: // Display info on a particular card
+                    // code block
+                    break;
+                case 3: // Add a card
+                    // code
+                    break;
+                case 4: // Remove a card (4 options)
+                    // code
+                    break;
+                case 5: // Edit attack
+                    // code
+                    break;
+                case 6: // Sort cards (3 options)
+                    // code
+                    break;
+            }
+        }
     }
+
+    public static void printAlbum(Scanner in, ArrayList <Album> albums) {
+        printAllAlbums(albums);
+        System.out.println(albums.get(getAlbumIndex(in,albums)));
+    }
+    public static int getAlbumIndex (Scanner in, ArrayList <Album> albums) {
+        return Collections.binarySearch(albums, new Album (getAlbumNum(in,albums)));
+    }
+
+    public static int getAlbumNum (Scanner in, ArrayList <Album> albums) {
+        int min = Integer.MIN_VALUE;
+        int max = Integer.MAX_VALUE;
+        double n = -1; // stores the input from the user
+        int validInt = 0; // int returned to the user
+        boolean validAnswer;
+        do {
+            try {
+                System.out.print ("Enter the number of the album looking for: ");
+                n = Double.parseDouble (in.nextLine().trim());
+                if (n %1.0 == 0) { // if the remainder after dividing by 1 is 0
+                    if (n < min) { //less than min
+                        n =  1;
+                        throw new NumberFormatException();
+                    } else if (n > max) { // more than max
+                        n = 2;
+                        throw new NumberFormatException();
+                    } else if (!duplicateAlbum((int) n, albums, true)){
+                        n = 3;
+                        throw new NumberFormatException();
+                    }
+                } else {
+                    n = -1;
+                    throw new NumberFormatException();
+                }
+                validInt = (int) n;
+                validAnswer = true;
+            } catch (NumberFormatException e) {
+                if (n == -1) { //invalid type
+                    System.out.print("ERROR! You entered an Invalid Type. ");
+                } else if (n == 1) { // less than min
+                    System.out.print("ERROR! Your number cannot be less than " + min + ". ");
+                } else if (n==2){ // more than max
+                    System.out.print("ERROR! Your number cannot be greater than " + max + ". ");
+                } else {
+                    System.out.print("ERROR! Your Album number is invalid. ");
+                }
+                System.out.println("Please choose a valid album number from the ones listed!");
+                n = -1;
+                validAnswer = false;
+            }
+        } while (!validAnswer);
+
+        return validInt;
+    }
+
     public static void printAllAlbums (ArrayList <Album> albums) {
+        System.out.println("Here are all the albums: ");
         for (Album album : albums) {
             System.out.println(album);
         }
     }
-    public static void printAlbum(Scanner in, ArrayList <Album> albums) {
-        int albumNum = getInt(in, "What is the name of the album you are looking for?",1,albums.size());
-        System.out.println(albums.get(albumNum-1));
-    }
-
     public static void addAlbum(BufferedReader br, ArrayList <Album> albums) {
 
     }
-    public static void removeAlbum(BufferedReader br, ArrayList <Album> albums) {
-
+    public static void removeAlbum(Scanner in, ArrayList <Album> albums) {
+        printAllAlbums(albums);
+        albums.remove(Collections.binarySearch(albums, new Album (getAlbumNum(in,albums))));
+        albums.trimToSize();
     }
     public static void printStatistics (ArrayList <Album> albums) {
-
+        for (Album album : albums) {
+            System.out.println(album.averageHP());
+            System.out.println(album.cardsOutOfCapacity());
+        }
+        System.out.println(Album.cardsOutOfCapacityCollection());
+        System.out.println(Album.averageHPOfCollection());
     }
     public static void printCardsOfAlbum(BufferedReader br, ArrayList <Album> albums) {
 
@@ -138,6 +219,10 @@ public class Driver {
         return inputString;
     }
     public static int getInt (Scanner in, String message, int min, int max) {
+        if (max<min) {
+            min = Integer.MIN_VALUE;
+            max = Integer.MAX_VALUE;
+        }
         double n = -1; // stores the input from the user
         int validInt = 0; // int returned to the user
         boolean validAnswer;
@@ -161,15 +246,13 @@ public class Driver {
                 validAnswer = true;
             } catch (NumberFormatException e) {
                 if (n == -1) { //invalid type
-                    System.out.println("ERROR! You entered an Invalid Type. "
-                            + "Please enter an integer between " + min + " and " + max + " (inclusive)!");
+                    System.out.print("ERROR! You entered an Invalid Type. ");
                 } else if (n == 1) { // less than min
-                    System.out.println("ERROR! Your number cannot be less than " + min + ". "
-                            + "Please enter an integer between " + min + " and " + max + " (inclusive)!");
+                    System.out.print("ERROR! Your number cannot be less than " + min + ". ");
                 } else { // more than max
-                    System.out.println("ERROR! Your number cannot be greater than " + max + ". "
-                            + "Please enter an integer between " + min + " and " + max + " (inclusive)!");
+                    System.out.print("ERROR! Your number cannot be greater than " + max + ". ");
                 }
+                System.out.println("Please enter an integer between " + min + " and " + max + " (inclusive)!");
                 n = -1;
                 validAnswer = false;
             }
@@ -203,19 +286,14 @@ public class Driver {
                 validAnswer = true;
             } catch (IOException e) {
                 switch (fullInput) {
-                    case "?" -> // invalid type
-                            System.out.println("ERROR! You entered an Invalid Type. "
-                                    + "Please enter a character!");
                     case "1" ->  // input too long
-                            System.out.println("ERROR! Your response was more than one character. "
-                                    + "Please enter a character!");
+                            System.out.print("ERROR! Your response was more than one character. ");
                     case "2" ->  // input length 0
-                            System.out.println("ERROR! You did not provide a response. "
-                                    + "Please enter a character!");
+                            System.out.print("ERROR! You did not provide a response. ");
                     case "3" -> // input is not y or n
-                            System.out.println("ERROR! You did not provide a response. "
-                                    + "Please enter a character!");
+                            System.out.print("ERROR! Your response was not 'y' nor was it 'n'. ");
                 }
+                System.out.println("Please enter a valid character!");
                 fullInput = "?";
                 validAnswer = false;
             }
@@ -223,7 +301,7 @@ public class Driver {
         return charInput;
     }
 
-    public static void getAlbum (Scanner in, ArrayList <Album> albums, ArrayList <Integer> albumNums, boolean binarySearch) {
+    public static void importAlbum (Scanner in, ArrayList <Album> albums, boolean binarySearch) {
         boolean validFileName = false;
         while (!validFileName) {
             try {
@@ -231,7 +309,7 @@ public class Driver {
                 String fileName = in.nextLine();
                 BufferedReader inFile = new BufferedReader(new FileReader(fileName + ".txt"));
                 validFileName = true;
-                System.out.println(readFile(inFile, albums, binarySearch, albumNums));
+                System.out.println(readFile(inFile, albums, binarySearch));
                 inFile.close();
             } catch (FileNotFoundException e) {
                 System.out.println("File Not Found\n");
@@ -241,10 +319,10 @@ public class Driver {
         }
 
     }
-    public static String readFile (BufferedReader inFile, ArrayList <Album> albums, boolean binarySearch, ArrayList <Integer> albumNums) {
+    public static String readFile (BufferedReader inFile, ArrayList <Album> albums, boolean binarySearch) {
         try {
             String line;
-            if (duplicateAlbum(inFile.readLine().trim(),binarySearch,albumNums)) {
+            if (duplicateAlbum(Integer.parseInt(inFile.readLine().trim()),albums,binarySearch)) {
                 return "This is a duplicate album";
             }
             Date albumDate = new Date (inFile.readLine().trim());
@@ -256,9 +334,8 @@ public class Driver {
                 int HP = Integer.parseInt(inFile.readLine().trim());
                 String type = inFile.readLine().trim();
                 Date thisCardDate = new Date (inFile.readLine().trim());
-                int attacksInCard = Integer.parseInt(inFile.readLine());
-                ArrayList <Attack> attacks = new ArrayList <>(attacksInCard);
-                for (int j = 0; j < attacksInCard; j++) {
+                Attack [] attacks = new Attack [Integer.parseInt(inFile.readLine())];
+                for (int j = 0; j < attacks.length; j++) {
                     String attackNameDescription = inFile.readLine().trim();
                     int indexOfHyphen = attackNameDescription.indexOf('-');
                     String attackName, attackDescription;
@@ -269,21 +346,21 @@ public class Driver {
                         attackName = attackNameDescription.substring(0,indexOfHyphen).trim();
                         attackDescription = attackNameDescription.substring(indexOfHyphen+1).trim();
                     }
-                    attacks.add(new Attack(attackName,attackDescription,inFile.readLine().trim()));
+                    attacks[0] = (new Attack(attackName,attackDescription,inFile.readLine().trim()));
                 }
                 cards.add(new Card (name, HP, type, thisCardDate,attacks));
             }
+            albums.add(new Album(cards,maxCapacity,albumDate));
         } catch (IOException e) {
             return "Reading Error";
         }
         return "Album import successful!";
     }
-    public static boolean duplicateAlbum (String line, boolean binarySearch, ArrayList <Integer> albumNums) {
-        int albumNum = Integer.parseInt(line);
+    public static boolean duplicateAlbum (int albumNum, ArrayList <Album> albums, boolean binarySearch) {
         if (binarySearch) {
-            return Collections.binarySearch(albumNums, albumNum) >= 0;
+            return (Collections.binarySearch(albums, new Album (albumNum)) > -1); // true if whole number index
         } else {
-            return albumNums.contains(albumNum);
+            return albums.contains(new Album (albumNum));
         }
     }
 }
