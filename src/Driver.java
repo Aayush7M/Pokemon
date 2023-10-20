@@ -2,9 +2,8 @@ import java.io.*;
 import java.util.*;
 
 public class Driver {
-    public static void main (String[] args) throws IOException {
+    public static void main (String[] args) {
         System.out.println("Welcome!");
-        boolean moreAlbumsToAdd = true;
         ArrayList <Album> albums = new ArrayList <>();
         Scanner in = new Scanner(System.in);
         do {
@@ -17,7 +16,7 @@ public class Driver {
             if (mainMenuChoice == 1) {
                 subMenuOne(in,albums);
             } else if (mainMenuChoice == 2) {
-                subMenuTwo(in);
+                subMenuTwo(in,albums);
             } else {
                 System.out.println("Goodbye!");
             }
@@ -81,16 +80,19 @@ public class Driver {
         int choice;
         while ((choice = displayMenu(in, 1)) != 7) {
             printAllAlbums(albums);
-            int albumIndex = getAlbumIndex(in,albums);
+            Album currentAlbum = albums.get(getAlbumIndex(in,albums));
             switch(choice) {
                 case 1: // Display all cards (in the last sorted order)
-                    // code
+                    currentAlbum.printNameDateAllCards(); // prints the name and date
                     break;
                 case 2: // Display info on a particular card
-                    // code block
+                    currentAlbum.printNameDateAllCards(); // print the name and date
+                    String message = "Which card would you like to get more information about?";
+                    int cardChosen = getInt(in,message,1,currentAlbum.getCardsSize());
+                    System.out.println(currentAlbum.getCards().get(cardChosen));
                     break;
                 case 3: // Add a card
-                    // code
+                    System.out.println(addCard(in,currentAlbum));
                     break;
                 case 4: // Remove a card (4 options)
                     // code
@@ -104,7 +106,6 @@ public class Driver {
             }
         }
     }
-
     public static void printAlbum(Scanner in, ArrayList <Album> albums) {
         printAllAlbums(albums);
         System.out.println(albums.get(getAlbumIndex(in,albums)));
@@ -112,7 +113,6 @@ public class Driver {
     public static int getAlbumIndex (Scanner in, ArrayList <Album> albums) {
         return Collections.binarySearch(albums, new Album (getAlbumNum(in,albums)));
     }
-
     public static int getAlbumNum (Scanner in, ArrayList <Album> albums) {
         int min = Integer.MIN_VALUE;
         int max = Integer.MAX_VALUE;
@@ -158,15 +158,11 @@ public class Driver {
 
         return validInt;
     }
-
     public static void printAllAlbums (ArrayList <Album> albums) {
         System.out.println("Here are all the albums: ");
         for (Album album : albums) {
             System.out.println(album);
         }
-    }
-    public static void addAlbum(BufferedReader br, ArrayList <Album> albums) {
-
     }
     public static void removeAlbum(Scanner in, ArrayList <Album> albums) {
         printAllAlbums(albums);
@@ -181,14 +177,25 @@ public class Driver {
         System.out.println(Album.cardsOutOfCapacityCollection());
         System.out.println(Album.averageHPOfCollection());
     }
-    public static void printCardsOfAlbum(BufferedReader br, ArrayList <Album> albums) {
-
-    }
-    public static void printStatsOfCard (BufferedReader br, ArrayList <Album> albums) {
-
-    }
-    public static void addCard (BufferedReader br, ArrayList <Album> albums) {
-
+    public static String addCard (Scanner in, Album currentAlbum) {
+        if (currentAlbum.atMaxCapacity()) {
+            return "Sorry, this album is at maximum capacity. You cannot add more cards.";
+        } else {
+            String name = getString(in, "What is the name of the card?", true);
+            int HP = getInt(in, "What is the HP of this card?", 1,Integer.MAX_VALUE);
+            String type = getString(in, "What type is this card?",true);
+            Date thisCardDate = new Date (getDate(in, "What is the date you got this card?"));
+            Attack [] attacks = new Attack [getInt(in,"How many attacks does this card have?",
+                    1,Integer.MAX_VALUE)];
+            for (int j = 0; j < attacks.length; j++) {
+                String attackName = getString(in, "What is the name of attack " + j,true);
+                String attackDescription = getString(in, "Enter attack description",false);
+                String attackDamage = getString(in, "What is the damage of the attack", true);
+                attacks[0] = (new Attack(attackName,attackDescription,attackDamage));
+            }
+            currentAlbum.addCard(new Card (name, HP, type, thisCardDate,attacks));
+            return "Card added successfully!";
+        }
     }
     public static void removeCard (BufferedReader br, ArrayList <Album> albums) {
 
@@ -196,7 +203,7 @@ public class Driver {
     public static void editAttack (BufferedReader br, ArrayList <Album> albums) {
 
     }
-    public static String getString (Scanner in, String message) {
+    public static String getString (Scanner in, String message, boolean emptyInputForbidden) {
         String inputString; // stores the input
         boolean validAnswer;
         do {
@@ -204,7 +211,7 @@ public class Driver {
                 System.out.print(message + ": ");
                 inputString = in.nextLine().trim().toLowerCase();
 
-                if (inputString.isEmpty()) { //input length 0 chars
+                if (inputString.isEmpty() && emptyInputForbidden) { //input length 0 chars
                     throw new IOException();
                 }
 
@@ -260,8 +267,6 @@ public class Driver {
 
         return validInt;
     }
-    public static void getCard (BufferedReader br, Album album) {
-    }
     public static char getChar(Scanner in, String message) {
         String fullInput = "?"; // stores the original input from the user
         char charInput = '?'; // stores the user's character response
@@ -300,7 +305,63 @@ public class Driver {
         } while (!validAnswer);
         return charInput;
     }
+    public static int[] getDate (Scanner in, String message) {
+        String inputString ="?"; // stores the input
+        boolean validAnswer;
+        int[] parsedDate = {};
+        do {
+            try {
+                System.out.print(message + ": ");
+                inputString = in.nextLine().trim().toLowerCase();
+                if (inputString.isEmpty()) { //input length 0 chars
+                    inputString = "1";
+                    throw new IOException();
+                }
+                int firstSlash = inputString.indexOf('/');
+                int lastSlash = inputString.lastIndexOf('/');
+                if (firstSlash == -1) {
+                    inputString = "2";
+                    throw new IOException();
+                } else if (firstSlash == lastSlash) {
+                    inputString = "3";
+                    throw new IOException();
+                }
+                parsedDate = parseDate(inputString);
+                if (parsedDate.length == 0) {
+                    inputString = "1";
+                    throw new NumberFormatException();
+                } else if (!Date.validMonthDayYearTriplet(parsedDate)) {
+                    inputString = "2";
+                    throw new NumberFormatException();
+                }
 
+                validAnswer = true;
+            } catch (NumberFormatException e) {
+                switch (inputString) {
+                    case "1" ->  // invalid number
+                            System.out.print("ERROR! Your input had invalid characters. ");
+                    case "2" ->  // no slashes
+                            System.out.print("ERROR! Your date was invalid. ");
+                }
+                System.out.println("Please enter a date in format DD/MM/YYYY!");
+                inputString = "?";
+                validAnswer = false;
+            } catch (IOException e) {
+                switch (inputString) {
+                    case "1" ->  // input length 0
+                            System.out.print("ERROR! You did not provide a response. ");
+                    case "2" ->  // no slashes
+                            System.out.print("ERROR! Your input had no slashes. ");
+                    case "3" -> // one slash
+                            System.out.print("ERROR! Your input only had one slash. ");
+                }
+                System.out.println("Please enter a date in format DD/MM/YYYY!");
+                inputString = "?";
+                validAnswer = false;
+            }
+        } while (!validAnswer);
+        return parsedDate;
+    }
     public static void importAlbum (Scanner in, ArrayList <Album> albums, boolean binarySearch) {
         boolean validFileName = false;
         while (!validFileName) {
@@ -321,11 +382,10 @@ public class Driver {
     }
     public static String readFile (BufferedReader inFile, ArrayList <Album> albums, boolean binarySearch) {
         try {
-            String line;
             if (duplicateAlbum(Integer.parseInt(inFile.readLine().trim()),albums,binarySearch)) {
                 return "This is a duplicate album";
             }
-            Date albumDate = new Date (inFile.readLine().trim());
+            Date albumDate = new Date (parseDate(inFile.readLine().trim()));
             int maxCapacity = Integer.parseInt(inFile.readLine().trim());
             int cardsInAlbum = Integer.parseInt(inFile.readLine().trim());
             ArrayList <Card> cards = new ArrayList <> (cardsInAlbum);
@@ -333,7 +393,7 @@ public class Driver {
                 String name = inFile.readLine().trim();
                 int HP = Integer.parseInt(inFile.readLine().trim());
                 String type = inFile.readLine().trim();
-                Date thisCardDate = new Date (inFile.readLine().trim());
+                Date thisCardDate = new Date (parseDate(inFile.readLine().trim()));
                 Attack [] attacks = new Attack [Integer.parseInt(inFile.readLine())];
                 for (int j = 0; j < attacks.length; j++) {
                     String attackNameDescription = inFile.readLine().trim();
@@ -346,7 +406,7 @@ public class Driver {
                         attackName = attackNameDescription.substring(0,indexOfHyphen).trim();
                         attackDescription = attackNameDescription.substring(indexOfHyphen+1).trim();
                     }
-                    attacks[0] = (new Attack(attackName,attackDescription,inFile.readLine().trim()));
+                    attacks[i] = (new Attack(attackName,attackDescription,inFile.readLine().trim()));
                 }
                 cards.add(new Card (name, HP, type, thisCardDate,attacks));
             }
@@ -361,6 +421,19 @@ public class Driver {
             return (Collections.binarySearch(albums, new Album (albumNum)) > -1); // true if whole number index
         } else {
             return albums.contains(new Album (albumNum));
+        }
+    }
+    public static int[] parseDate (String date) {
+        try {
+            int month, day, year;
+            int firstSlash = date.indexOf("/");
+            int secondSlash = date.lastIndexOf("/");
+            month = Integer.parseInt(date.substring(0, firstSlash));
+            day = Integer.parseInt(date.substring(firstSlash + 1, secondSlash));
+            year = Integer.parseInt(date.substring(secondSlash + 1));
+            return new int[]{month, day, year};
+        } catch (NumberFormatException e) {
+            return new int[]{};
         }
     }
 }

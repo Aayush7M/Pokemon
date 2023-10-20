@@ -23,6 +23,9 @@ public class Card implements Comparable <Card> {
         return date;
     }
 
+    public String nameDateToString () {
+        return String.format ("Name: %s%nDate: %s%n",name,date);
+    }
     public String toString() {
         StringBuilder returnString = new StringBuilder(String.format("Name: %s%nHP: %d%nType: %s%nDate: %s%nAttacks: %n", name, HP, type, date));
         for (Attack attack : attacks) {

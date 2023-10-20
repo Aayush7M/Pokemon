@@ -8,7 +8,7 @@ public class Album implements Comparable <Album> {
     ArrayList <Card> cardsSortedByDate;
     int maxCapacity;
     Date date;
-    int HP;
+    int albumHP;
     static int totalNumOfCards;
     static int totalCapacity;
     static int totalHP;
@@ -18,9 +18,9 @@ public class Album implements Comparable <Album> {
         this.maxCapacity = maxCapacity;
         this.date = date;
         for (Card card : cards) {
-            this.HP += card.getHP();
+            this.albumHP += card.getHP();
         }
-        totalHP += HP;
+        totalHP += albumHP;
         totalNumOfCards+=cards.size();
         totalCapacity+=maxCapacity;
     }
@@ -28,7 +28,7 @@ public class Album implements Comparable <Album> {
         this.albumNum = albumNum;
     }
     public String averageHP () { // average HP of THIS ALBUM
-        return ("Average HP: " + ((double) HP /cards.size()));
+        return ("Average HP: " + ((double) albumHP /cards.size()));
     }
     public static String averageHPOfCollection () {
         return ("Average HP: " + ((double) totalHP /totalNumOfCards));
@@ -40,10 +40,17 @@ public class Album implements Comparable <Album> {
     public String cardsOutOfCapacity () { // cards inside this album as compared to max capacity of this album.
         return (cards.size() + " cards out of " + maxCapacity);
     }
-    public void printAllCards () {
-        for (Card card : cards) {
-            System.out.println(card + "\n");
+    public void printAllInfoCard (int index) {
+        System.out.println(cards.get(index));
+    }
+    public void printNameDateAllCards () {
+        for (int i = 0 ; i < cards.size() ; i++) {
+            System.out.println((i+1) + ": ");
+            System.out.println(cards.get(i).nameDateToString() + "\n");
         }
+    }
+    public ArrayList <Card> getCards() {
+        return cards;
     }
     public void printCard () {
 
@@ -52,7 +59,10 @@ public class Album implements Comparable <Album> {
 
     }
     public void addCard (Card c) {
-
+        cards.add(c);
+        albumHP += c.getHP();
+        totalHP += albumHP;
+        totalNumOfCards++;
     }
     public void removeCard (Card c) {
 
@@ -74,7 +84,14 @@ public class Album implements Comparable <Album> {
                 "Date: %s%n" +
                 "Max Capacity: %d%n" +
                 "Number of Cards: %d%n" +
-                "Total HP: %d%n", albumNum, date, maxCapacity, cards.size(), HP);
+                "Total HP: %d%n", albumNum, date, maxCapacity, cards.size(), albumHP);
     }
 
+
+    public int getCardsSize () {
+        return cards.size();
+    }
+    public boolean atMaxCapacity () {
+        return cards.size() == maxCapacity;
+    }
 }
