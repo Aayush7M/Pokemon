@@ -244,25 +244,35 @@ public class Driver {
     public static String readFile (BufferedReader inFile, ArrayList <Album> albums, boolean binarySearch, ArrayList <Integer> albumNums) {
         try {
             String line;
-            if (duplicateAlbum(inFile.readLine(),binarySearch,albumNums)) {
+            if (duplicateAlbum(inFile.readLine().trim(),binarySearch,albumNums)) {
                 return "This is a duplicate album";
             }
-            Date albumDate = new Date (inFile.readLine());
-            int maxCapacity = Integer.parseInt(inFile.readLine());
-            int cardsInAlbum = Integer.parseInt(inFile.readLine());
+            Date albumDate = new Date (inFile.readLine().trim());
+            int maxCapacity = Integer.parseInt(inFile.readLine().trim());
+            int cardsInAlbum = Integer.parseInt(inFile.readLine().trim());
             ArrayList <Card> cards = new ArrayList <> (cardsInAlbum);
             for (int i = 0; i < cardsInAlbum; i++) {
-                String name = inFile.readLine();
-                int HP = Integer.parseInt(inFile.readLine());
-                String type = inFile.readLine();
-                Date thisCardDate = new Date (inFile.readLine());
+                String name = inFile.readLine().trim();
+                int HP = Integer.parseInt(inFile.readLine().trim());
+                String type = inFile.readLine().trim();
+                Date thisCardDate = new Date (inFile.readLine().trim());
                 int attacksInCard = Integer.parseInt(inFile.readLine());
                 ArrayList <Attack> attacks = new ArrayList <>(attacksInCard);
                 for (int j = 0; j < attacksInCard; j++) {
-
+                    String attackNameDescription = inFile.readLine().trim();
+                    int indexOfHyphen = attackNameDescription.indexOf('-');
+                    String attackName, attackDescription;
+                    if (indexOfHyphen==-1) { // no hyphen
+                        attackName = attackNameDescription;
+                        attackDescription = "";
+                    } else {
+                        attackName = attackNameDescription.substring(0,indexOfHyphen).trim();
+                        attackDescription = attackNameDescription.substring(indexOfHyphen+1).trim();
+                    }
+                    attacks.add(new Attack(attackName,attackDescription,inFile.readLine().trim()));
                 }
+                cards.add(new Card (name, HP, type, thisCardDate,attacks));
             }
-
         } catch (IOException e) {
             return "Reading Error";
         }
