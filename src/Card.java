@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Card implements Comparable <Card> {
     String name;
@@ -21,6 +22,10 @@ public class Card implements Comparable <Card> {
 
     public Date getDate () {
         return date;
+    }
+
+    public Attack[] getAttacks () {
+        return attacks;
     }
 
     public String nameDateToString () {
@@ -47,15 +52,15 @@ public class Card implements Comparable <Card> {
         this.HP = HP;
     }
     public int compareTo (Card c) {
-
-    }
-    public void changeAttack (int indexOfAttack, String attributeToChange, String changeTo) {
-        if (attributeToChange.equals("name")) {
-            attacks[indexOfAttack].setName(changeTo);
-        } else if (attributeToChange.equals("description")) {
-            attacks[indexOfAttack].setDescription(changeTo);
-        } else { // damage
-            attacks[indexOfAttack].setDamage(changeTo);
+        int compareResult;
+        if ((compareResult = this.name.compareToIgnoreCase(c.name)) == 0) {
+            return this.HP-c.getHP();
+        } else {
+            return compareResult;
         }
+    }
+
+    public void sortAttacks () {
+        Arrays.sort(attacks);
     }
 }

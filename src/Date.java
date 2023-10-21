@@ -8,6 +8,19 @@ public class Date {
         year = parsedDate[2];
 
     }
+
+    public int getMonth () {
+        return month;
+    }
+
+    public int getDay () {
+        return day;
+    }
+
+    public int getYear () {
+        return year;
+    }
+
     public static boolean validMonthDayYearTriplet (int[] parsedDate) {
         int month = parsedDate[0];
         int day = parsedDate[1];

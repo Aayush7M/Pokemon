@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Album implements Comparable <Album> {
     int albumNum;
@@ -40,9 +41,6 @@ public class Album implements Comparable <Album> {
     public String cardsOutOfCapacity () { // cards inside this album as compared to max capacity of this album.
         return (cards.size() + " cards out of " + maxCapacity);
     }
-    public void printAllInfoCard (int index) {
-        System.out.println(cards.get(index));
-    }
     public void printNameDateAllCards () {
         for (int i = 0 ; i < cards.size() ; i++) {
             System.out.println((i+1) + ": ");
@@ -52,29 +50,24 @@ public class Album implements Comparable <Album> {
     public ArrayList <Card> getCards() {
         return cards;
     }
-    public void printCard () {
-
-    }
-    public boolean isCardInAlbum(String s) {
-
-    }
     public void addCard (Card c) {
-        cards.add(c);
+        int indexToAdd = -Collections.binarySearch(cards,c);
+        cards.add(indexToAdd,c);
         albumHP += c.getHP();
         totalHP += albumHP;
         totalNumOfCards++;
     }
-    public void removeCard (Card c) {
-
+    public void sortCardsByName () {
+        Collections.sort(cards);
+    }
+    public void sortCardsByHP () {
+        cards.sort(new SortByHP());
     }
     public void removeCard (int index) {
-
+        cards.remove(index);
     }
-    public boolean isAttackInCard (String s) {
-
-    }
-    public ArrayList <Card> sortAlbum (String sortBy) {
-
+    public int findCardGivenName (String name) {
+        return Collections.binarySearch(cards, new Card(name));
     }
     public int compareTo (Album a) {
         return (this.albumNum - a.albumNum);
@@ -93,5 +86,9 @@ public class Album implements Comparable <Album> {
     }
     public boolean atMaxCapacity () {
         return cards.size() == maxCapacity;
+    }
+
+    public int findCardGivenHP (int hp) {
+        return Collections.binarySearch(cards, new Card (hp), new SortByHP());
     }
 }
