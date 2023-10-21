@@ -1,13 +1,12 @@
 public class Attack implements Comparable <Attack>{
-    String name;
-    String description;
-    String damage;
+    private String name;
+    private String description;
+    private String damage;
     public Attack (String name, String description, String damage) {
         this.name = name;
         this.description = description;
         this.damage = damage;
     }
-
     public String getName () {
         return name;
     }

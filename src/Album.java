@@ -2,17 +2,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Album implements Comparable <Album> {
-    int albumNum;
-    ArrayList <Card> cards;
-    ArrayList <Card> cardsSortedByName;
-    ArrayList <Card> cardsSortedByHP;
-    ArrayList <Card> cardsSortedByDate;
-    int maxCapacity;
-    Date date;
-    int albumHP;
-    static int totalNumOfCards;
-    static int totalCapacity;
-    static int totalHP;
+    private int albumNum;
+    private ArrayList <Card> cards;
+    private int maxCapacity;
+    private Date date;
+    private int albumHP;
+    private static int totalNumOfCards;
+    private static int totalCapacity;
+    private static int totalHP;
 
     public Album (ArrayList <Card> cards, int maxCapacity, Date date) {
         this.cards = cards;
@@ -51,17 +48,20 @@ public class Album implements Comparable <Album> {
         return cards;
     }
     public void addCard (Card c) {
-        int indexToAdd = -Collections.binarySearch(cards,c);
-        cards.add(indexToAdd,c);
+        cards.add(c);
         albumHP += c.getHP();
         totalHP += albumHP;
         totalNumOfCards++;
+        Collections.sort(cards);
     }
     public void sortCardsByName () {
         Collections.sort(cards);
     }
     public void sortCardsByHP () {
         cards.sort(new SortByHP());
+    }
+    public void sortCardsByDate () {
+        cards.sort(new SortByDate());
     }
     public void removeCard (int index) {
         cards.remove(index);
@@ -79,15 +79,12 @@ public class Album implements Comparable <Album> {
                 "Number of Cards: %d%n" +
                 "Total HP: %d%n", albumNum, date, maxCapacity, cards.size(), albumHP);
     }
-
-
     public int getCardsSize () {
         return cards.size();
     }
     public boolean atMaxCapacity () {
         return cards.size() == maxCapacity;
     }
-
     public int findCardGivenHP (int hp) {
         return Collections.binarySearch(cards, new Card (hp), new SortByHP());
     }

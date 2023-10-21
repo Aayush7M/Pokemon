@@ -1,7 +1,7 @@
 public class Date {
-    int month;
-    int day;
-    int year;
+    private final int month;
+    private final int day;
+    private final int year;
     public Date (int[] parsedDate) {
         month = parsedDate[0];
         day = parsedDate[1];

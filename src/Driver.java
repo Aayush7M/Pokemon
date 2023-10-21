@@ -1,5 +1,4 @@
 import java.io.*;
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class Driver {
@@ -7,9 +6,12 @@ public class Driver {
         System.out.println("Welcome!");
         ArrayList <Album> albums = new ArrayList <>();
         Scanner in = new Scanner(System.in);
-        do {
-            importAlbum(in, albums, false);
-        } while (getChar(in, "Would you like to add more albums?") == 'y');
+        if (getChar(in, "Would you like to add an album?") == 'y') {
+            do {
+                importAlbum(in, albums, false);
+            } while (getChar(in, "Would you like to add more albums?") == 'y');
+        }
+
 
         Collections.sort(albums);
         int mainMenuChoice;
@@ -320,16 +322,15 @@ public class Driver {
         }
     }
     public static void sortCards (int choice, Album currentAlbum) {
-        ArrayList <Card> cards = currentAlbum.getCards();
         switch (choice) {
             case 1:
-                Collections.sort(cards);
+                currentAlbum.sortCardsByName();
             case 2:
-                cards.sort(new SortByHP());
+                currentAlbum.sortCardsByHP();
             case 3:
-                cards.sort(new SortByDate());
+                currentAlbum.sortCardsByDate();
         }
-        System.out.println(cards);
+        System.out.println(currentAlbum.getCards());
     }
     public static String getString (Scanner in, String message, boolean emptyInputForbidden) {
         String inputString; // stores the input
@@ -410,7 +411,7 @@ public class Driver {
                 } else if (fullInput.isEmpty()) { //input length 0
                     fullInput = "2";
                     throw new IOException();
-                } else if (!(fullInput.equals("y") || fullInput.equals("s"))) {
+                } else if (!(fullInput.equals("y") || fullInput.equals("n"))) {
                     fullInput = "3";
                     throw new IOException();
                 }
@@ -534,7 +535,7 @@ public class Driver {
                         attackName = attackNameDescription.substring(0,indexOfHyphen).trim();
                         attackDescription = attackNameDescription.substring(indexOfHyphen+1).trim();
                     }
-                    attacks[i] = (new Attack(attackName,attackDescription,inFile.readLine().trim()));
+                    attacks[j] = (new Attack(attackName,attackDescription,inFile.readLine().trim()));
                 }
                 cards.add(new Card (name, HP, type, thisCardDate,attacks));
             }

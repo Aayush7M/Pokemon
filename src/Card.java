@@ -2,11 +2,11 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class Card implements Comparable <Card> {
-    String name;
-    int HP;
-    String type;
-    Date date;
-    Attack[] attacks;
+    private String name;
+    private int HP;
+    private String type;
+    private Date date;
+    private Attack[] attacks;
 
     public String getName () {
         return name;
@@ -14,10 +14,6 @@ public class Card implements Comparable <Card> {
 
     public int getHP () {
         return HP;
-    }
-
-    public String getType () {
-        return type;
     }
 
     public Date getDate () {
@@ -59,7 +55,6 @@ public class Card implements Comparable <Card> {
             return compareResult;
         }
     }
-
     public void sortAttacks () {
         Arrays.sort(attacks);
     }
