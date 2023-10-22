@@ -3,8 +3,16 @@ import java.util.*;
 
 public class Driver {
     public static void main (String[] args) {
+
+
         System.out.println("Welcome!");
         ArrayList <Album> albums = new ArrayList <>();
+        try {
+            BufferedReader inFile = new BufferedReader(new FileReader("album1.txt"));
+            System.out.println(readFile(inFile, albums, false));
+            inFile = new BufferedReader(new FileReader("album5.txt"));
+            System.out.println(readFile(inFile, albums, false));
+        } catch (IOException ignored) {}
         Scanner in = new Scanner(System.in);
         if (getChar(in, "Would you like to add an album?") == 'y') {
             do {
@@ -33,7 +41,7 @@ public class Driver {
             System.out.println ("2) Accessing within a particular album");
             System.out.println ("3) Exit");
             System.out.println ("----------------------------------");
-            return getInt(in, "\n\nPlease enter your choice", 1, 3);
+            return getInt(in, "\nPlease enter your choice", 1, 3);
         } else if (menuNum == 1) {
             System.out.println ("\n---------  SUB-MENU #1  ----------");
             System.out.println ("1) Display a list of all albums");
@@ -43,10 +51,10 @@ public class Driver {
             System.out.println ("5) Show statistics");
             System.out.println ("6) Return back to main menu.");
             System.out.println ("----------------------------------");
-            return getInt(in, "\n\nPlease enter your choice", 1, 6);
+            return getInt(in, "\nPlease enter your choice", 1, 6);
         } else if (menuNum == 2){
             System.out.println ("\n---------  SUB-MENU #2  ----------");
-            System.out.println ("1) Display all cards (in the last sorted order) ");
+            System.out.println ("1) Display all cards (in the last sorted order)");
             System.out.println ("2) Display info on a particular card");
             System.out.println ("3) Add a card");
             System.out.println ("4) Remove a card (4 options)");
@@ -54,34 +62,37 @@ public class Driver {
             System.out.println ("6) Sort cards (3 options)");
             System.out.println ("7) Return back to main menu");
             System.out.println ("----------------------------------");
-            return getInt(in, "\n\nPlease enter your choice", 1, 7);
+            return getInt(in, "\nPlease enter your choice", 1, 7);
         } else if (menuNum ==3) {
-            System.out.println("\nINSERT TITLE HERE");
-            System.out.println("1) Remove by Name");
-            System.out.println("2) Remove by HP");
-            System.out.println("3) Remove First Card in last sorted order");
-            System.out.println("4) Remove Last Card in last sorted order");
-            return getInt(in, "\n\nPlease enter your choice", 1, 4);
+            System.out.println("\n---------  REMOVE ...  ----------");
+            System.out.println("1) By Name");
+            System.out.println("2) By HP");
+            System.out.println("3) First Card in last sorted order");
+            System.out.println("4) Last Card in last sorted order");
+            return getInt(in, "\nPlease enter your choice", 1, 4);
         } else if (menuNum == 4) {
-            System.out.println("\nINSERT TITLE HERE");
-            System.out.println("1) Attack Name");
-            System.out.println("2) Attack Description");
-            System.out.println("3) Attack Damage");
-            return getInt(in, "\n\nPlease enter your choice", 1, 3);
+            System.out.println("\n---------  CHANGE ATTACK ...  ----------");
+            System.out.println("1) Name");
+            System.out.println("2) Description");
+            System.out.println("3) Damage");
+            return getInt(in, "\nPlease enter your choice", 1, 3);
         } else {
-            System.out.println("\nINSERT TITLE HERE");
-            System.out.println("1) Sort by Name");
-            System.out.println("2) Sort by HP");
-            System.out.println("3) Sort by Date");
-            return getInt(in, "\n\nPlease enter your choice", 1, 3);
+            System.out.println("\n---------  SORT BY ...  ----------");
+            System.out.println("1) Name");
+            System.out.println("2) HP");
+            System.out.println("3) Date");
+            return getInt(in, "\nPlease enter your choice", 1, 3);
         }
     }
     public static void subMenuOne (Scanner in, ArrayList <Album> albums) {
         int choice;
         while ((choice = displayMenu(in, 1)) != 6) {
+            if (choice!=3 && albums.isEmpty()) {
+                choice = 7;
+            }
             switch(choice) {
                 case 1: // Display a list of all albums
-                    printAllAlbums(albums);
+                    printNameDateAllAlbums(albums);
                     break;
                 case 2: // Display info on a particular album
                     printAlbum(in, albums);
@@ -94,20 +105,30 @@ public class Driver {
                     break;
                 case 5: // Show statistics
                     printStatistics(albums);
+                    break;
+                case 7:
+                    System.out.println("There are no albums imported.");
             }
         }
     }
     public static void subMenuTwo (Scanner in, ArrayList <Album> albums) {
+        if (albums.isEmpty()) {
+            System.out.println("There are no albums imported.");
+            return;
+        }
         int choice;
-        while ((choice = displayMenu(in, 1)) != 7) {
-            printAllAlbums(albums);
-            Album currentAlbum = albums.get(getAlbumIndex(in,albums));
+        printAllAlbums(albums);
+        Album currentAlbum = albums.get(getAlbumIndex(in,albums));
+        while ((choice = displayMenu(in, 2)) != 7) {
+            if (choice != 3 && currentAlbum.getCardsSize()==0) {
+                choice = 7;
+            }
             switch(choice) {
                 case 1: // Display all cards (in the last sorted order)
                     currentAlbum.printNameDateAllCards(); // prints the name and date
                     break;
                 case 2: // Display info on a particular card
-                    System.out.println();
+                    System.out.println(getCard(in,currentAlbum));
                     break;
                 case 3: // Add a card
                     System.out.println(addCard(in,currentAlbum));
@@ -121,6 +142,8 @@ public class Driver {
                 case 6: // Sort cards (3 options)
                     sortCards(displayMenu(in,5),currentAlbum);
                     break;
+                case 7:
+                    System.out.println("There are no cards in album");
             }
         }
     }
@@ -129,8 +152,13 @@ public class Driver {
         String message = "Which card would you like to get more information about?";
         return currentAlbum.getCards().get(getInt(in,message,1,currentAlbum.getCardsSize()) - 1);
     }
+    public static void printNameDateAllAlbums (ArrayList <Album> albums) {
+        for (Album album : albums) {
+            System.out.println(album.nameDateToString());
+        }
+    }
     public static void printAlbum(Scanner in, ArrayList <Album> albums) {
-        printAllAlbums(albums);
+        printNameDateAllAlbums(albums);
         System.out.println(albums.get(getAlbumIndex(in,albums)));
     }
     public static int getAlbumIndex (Scanner in, ArrayList <Album> albums) {
@@ -188,7 +216,7 @@ public class Driver {
         }
     }
     public static void removeAlbum(Scanner in, ArrayList <Album> albums) {
-        printAllAlbums(albums);
+        printNameDateAllAlbums(albums);
         albums.remove(Collections.binarySearch(albums, new Album (getAlbumNum(in,albums))));
         albums.trimToSize();
     }
@@ -207,7 +235,7 @@ public class Driver {
             String name = getString(in, "What is the name of the card?", true);
             int HP = getInt(in, "What is the HP of this card?", 1,Integer.MAX_VALUE);
             String type = getString(in, "What type is this card?",true);
-            Date thisCardDate = new Date (getDate(in, "What is the date you got this card?"));
+            Date thisCardDate = new Date (getDate(in, "What is the date you got this card? (in MM/DD/YYYY format)"));
             Attack [] attacks = new Attack [getInt(in,"How many attacks does this card have?",
                     1,Integer.MAX_VALUE)];
             for (int j = 0; j < attacks.length; j++) {
@@ -221,6 +249,7 @@ public class Driver {
         }
     }
     public static void removeCard (int choice, Scanner in, Album currentAlbum) {
+        ArrayList <Card> cards = currentAlbum.getCards();
         switch (choice) {
             case 1: // sort by name, remove
                 int indexOfName;
@@ -230,7 +259,6 @@ public class Driver {
                             true);
                 } while ((indexOfName = currentAlbum.findCardGivenName(name)) < 0);
                 int firstIndexOfName = indexOfName;
-                ArrayList <Card> cards = currentAlbum.getCards();
                 for (int i = indexOfName-1; i > -1; i--) {
                     if (cards.get(i).getName().equalsIgnoreCase(name)) {
                         firstIndexOfName--;
@@ -258,7 +286,7 @@ public class Driver {
                             1,lastIndexOfName-firstIndexOfName+1);
                     currentAlbum.removeCard(cardToRemove);
                 }
-
+                break;
             case 2: // sort by HP, remove
                 currentAlbum.sortCardsByHP();
                 int indexOfHP;
@@ -296,9 +324,10 @@ public class Driver {
                             1,lastIndexOfHP-firstIndexOfHP+1);
                     currentAlbum.removeCard(cardToRemove);
                 }
-                //code
+                break;
             case 3:
                 currentAlbum.removeCard(0);
+                break;
             case 4:
                 currentAlbum.removeCard(currentAlbum.getCardsSize() - 1);
         }
@@ -314,9 +343,11 @@ public class Driver {
             case 1: // name
                 attack.edit("name",getString(in,"Enter new name: ",true));
                 card.sortAttacks();
+                break;
             case 2: // description
                 attack.edit("description",getString(in, "Enter new description: ",
                         false));
+                break;
             case 3: // description
                 attack.edit("damage",getString(in,"Enter new damage: ",true));
         }
@@ -325,12 +356,15 @@ public class Driver {
         switch (choice) {
             case 1:
                 currentAlbum.sortCardsByName();
+                break;
             case 2:
                 currentAlbum.sortCardsByHP();
+                break;
             case 3:
                 currentAlbum.sortCardsByDate();
+                break;
         }
-        System.out.println(currentAlbum.getCards());
+        currentAlbum.printAllInfoAllCards();
     }
     public static String getString (Scanner in, String message, boolean emptyInputForbidden) {
         String inputString; // stores the input
@@ -472,7 +506,7 @@ public class Driver {
                     case "2" ->  // no slashes
                             System.out.print("ERROR! Your date was invalid. ");
                 }
-                System.out.println("Please enter a date in format DD/MM/YYYY!");
+                System.out.println("Please enter a date in format MM/DD/YYYY!");
                 inputString = "?";
                 validAnswer = false;
             } catch (IOException e) {
@@ -484,7 +518,7 @@ public class Driver {
                     case "3" -> // one slash
                             System.out.print("ERROR! Your input only had one slash. ");
                 }
-                System.out.println("Please enter a date in format DD/MM/YYYY!");
+                System.out.println("Please enter a date in format MM/DD/YYYY!");
                 inputString = "?";
                 validAnswer = false;
             }
@@ -511,7 +545,8 @@ public class Driver {
     }
     public static String readFile (BufferedReader inFile, ArrayList <Album> albums, boolean binarySearch) {
         try {
-            if (duplicateAlbum(Integer.parseInt(inFile.readLine().trim()),albums,binarySearch)) {
+            int albumNum;
+            if (duplicateAlbum(albumNum = Integer.parseInt(inFile.readLine().trim()),albums,binarySearch)) {
                 return "This is a duplicate album";
             }
             Date albumDate = new Date (parseDate(inFile.readLine().trim()));
@@ -539,7 +574,7 @@ public class Driver {
                 }
                 cards.add(new Card (name, HP, type, thisCardDate,attacks));
             }
-            albums.add(new Album(cards,maxCapacity,albumDate));
+            albums.add(new Album(albumNum,cards,maxCapacity,albumDate));
             albums.get(albums.size()-1).sortCardsByName();
         } catch (IOException e) {
             return "Reading Error";

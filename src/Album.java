@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Album implements Comparable <Album> {
-    private int albumNum;
+    private final int albumNum;
     private ArrayList <Card> cards;
     private int maxCapacity;
     private Date date;
@@ -11,7 +11,8 @@ public class Album implements Comparable <Album> {
     private static int totalCapacity;
     private static int totalHP;
 
-    public Album (ArrayList <Card> cards, int maxCapacity, Date date) {
+    public Album (int albumNum, ArrayList <Card> cards, int maxCapacity, Date date) {
+        this.albumNum = albumNum;
         this.cards = cards;
         this.maxCapacity = maxCapacity;
         this.date = date;
@@ -42,6 +43,11 @@ public class Album implements Comparable <Album> {
         for (int i = 0 ; i < cards.size() ; i++) {
             System.out.println((i+1) + ": ");
             System.out.println(cards.get(i).nameDateToString() + "\n");
+        }
+    }
+    public void printAllInfoAllCards () {
+        for (Card card : cards) {
+            System.out.println(card + "\n");
         }
     }
     public ArrayList <Card> getCards() {
@@ -87,5 +93,8 @@ public class Album implements Comparable <Album> {
     }
     public int findCardGivenHP (int hp) {
         return Collections.binarySearch(cards, new Card (hp), new SortByHP());
+    }
+    public String nameDateToString () {
+        return String.format ("Album Number: %d%nDate: %s%n",albumNum,date);
     }
 }

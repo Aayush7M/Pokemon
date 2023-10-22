@@ -14,7 +14,7 @@ public class Attack implements Comparable <Attack>{
         return String.format("Name: %s%nDescription: %s%nDamage: %s%n",name,description,damage);
     }
     public int compareTo (Attack a) {
-        return this.getName().compareToIgnoreCase(a.getName());
+        return this.name.compareToIgnoreCase(a.name);
     }
     public void edit (String attributeToChange, String changeTo) {
         if (attributeToChange.equals("name")) {

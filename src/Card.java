@@ -1,5 +1,5 @@
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 
 public class Card implements Comparable <Card> {
     private String name;
@@ -11,19 +11,15 @@ public class Card implements Comparable <Card> {
     public String getName () {
         return name;
     }
-
     public int getHP () {
         return HP;
     }
-
     public Date getDate () {
         return date;
     }
-
     public Attack[] getAttacks () {
         return attacks;
     }
-
     public String nameDateToString () {
         return String.format ("Name: %s%nDate: %s%n",name,date);
     }
@@ -50,7 +46,7 @@ public class Card implements Comparable <Card> {
     public int compareTo (Card c) {
         int compareResult;
         if ((compareResult = this.name.compareToIgnoreCase(c.name)) == 0) {
-            return this.HP-c.getHP();
+            return new SortByDate().compare(this, c);
         } else {
             return compareResult;
         }

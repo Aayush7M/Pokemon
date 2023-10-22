@@ -8,7 +8,7 @@ public class SortByDate implements Comparator <Card> {
             if ((monthDifference = a.getDate().getMonth()-b.getDate().getMonth())==0) {
                 int dayDifference;
                 if ((dayDifference = a.getDate().getDay()-b.getDate().getDay())==0) {
-                    return 0;
+                    return a.getName().compareToIgnoreCase(b.getName());
                 } else {
                     return dayDifference;
                 }
