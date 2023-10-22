@@ -7,9 +7,6 @@ public class Attack implements Comparable <Attack>{
         this.description = description;
         this.damage = damage;
     }
-    public String getName () {
-        return name;
-    }
     public String toString () {
         return String.format("Name: %s%nDescription: %s%nDamage: %s%n",name,description,damage);
     }

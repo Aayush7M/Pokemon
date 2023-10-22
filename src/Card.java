@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class Card implements Comparable <Card> {
     private String name;

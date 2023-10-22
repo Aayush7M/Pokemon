@@ -120,8 +120,15 @@ public class Driver {
         printAllAlbums(albums);
         Album currentAlbum = albums.get(getAlbumIndex(in,albums));
         while ((choice = displayMenu(in, 2)) != 7) {
-            if (choice != 3 && currentAlbum.getCardsSize()==0) {
-                choice = 7;
+            int numOfCardsInAlbum = currentAlbum.getCardsSize();
+            if (choice != 3 && numOfCardsInAlbum==0) { choice = 7; } // if empty album and user doesn't want to add cards
+            if (numOfCardsInAlbum == 1) {
+                System.out.println("Only one card in album, so that card has been automatically chosen");
+                if (choice == 1) { choice = 8; } // User wants card name/date
+                if (choice == 2) { choice = 9; } // User wants card all info
+                if (choice == 4) { choice = 10; } // Remove only card
+                if (choice == 5) { choice = 11; } // Edit only card
+                if (choice == 6) { choice = 12; } // Sorting won't do anything
             }
             switch(choice) {
                 case 1: // Display all cards (in the last sorted order)
@@ -144,6 +151,21 @@ public class Driver {
                     break;
                 case 7:
                     System.out.println("There are no cards in album");
+                    break;
+                case 8: // name date of only card
+                    System.out.println(currentAlbum.getCard(0).nameDateToString());
+                    break;
+                case 9: // all info of only card
+                    System.out.println(currentAlbum.getCard(0));
+                    break;
+                case 10: // remove only card
+                    currentAlbum.removeCard(0);
+                case 11:
+                    editAttack(displayMenu(in,4),in,currentAlbum.getCard(0));
+                case 12:
+                    System.out.println("Since there is only one card, output will the same no matter which method of sorting" +
+                            "is chosen. Here is the card: ");
+                    System.out.println(currentAlbum.getCard(0));
             }
         }
     }
@@ -252,6 +274,7 @@ public class Driver {
         ArrayList <Card> cards = currentAlbum.getCards();
         switch (choice) {
             case 1: // sort by name, remove
+                currentAlbum.sortCardsByName();
                 int indexOfName;
                 String name;
                 do {
@@ -277,14 +300,7 @@ public class Driver {
                 if (firstIndexOfName == lastIndexOfName) {
                     currentAlbum.removeCard(indexOfName);
                 } else {
-                    System.out.println("There are multiple cards which have this name");
-                    for (int i = firstIndexOfName; i <= lastIndexOfName; i++) {
-                        System.out.println((i-firstIndexOfName+1) + ": ");
-                        System.out.println(cards.get(i));
-                    }
-                    int cardToRemove = getInt(in, "Which card would you like to remove?",
-                            1,lastIndexOfName-firstIndexOfName+1);
-                    currentAlbum.removeCard(cardToRemove);
+                    currentAlbum.removeCards(firstIndexOfName,lastIndexOfName);
                 }
                 break;
             case 2: // sort by HP, remove
@@ -315,14 +331,7 @@ public class Driver {
                 if (firstIndexOfHP == lastIndexOfHP) {
                     currentAlbum.removeCard(indexOfHP);
                 } else {
-                    System.out.println("There are multiple cards which have this HP");
-                    for (int i = firstIndexOfHP; i <= lastIndexOfHP; i++) {
-                        System.out.println((i-firstIndexOfHP+1) + ": ");
-                        System.out.println(cards.get(i));
-                    }
-                    int cardToRemove = getInt(in, "Which card would you like to remove?",
-                            1,lastIndexOfHP-firstIndexOfHP+1);
-                    currentAlbum.removeCard(cardToRemove);
+                    currentAlbum.removeCards(firstIndexOfHP,lastIndexOfHP);
                 }
                 break;
             case 3:
@@ -334,11 +343,18 @@ public class Driver {
     }
     public static void editAttack (int choice, Scanner in, Card card) {
         Attack[] attacks = card.getAttacks();
-        for (int i = 0; i < attacks.length; i++) {
-            System.out.println((i+1) + ": ");
-            System.out.println(attacks[i] + "\n");
+        Attack attack;
+        if (attacks.length == 1) {
+            System.out.println("This card only has one attack. So, it has been automatically chosen.");
+            attack = attacks[0];
+        } else {
+            for (int i = 0; i < attacks.length; i++) {
+                System.out.println((i + 1) + ": ");
+                System.out.println(attacks[i] + "\n");
+            }
+            attack = attacks[getInt (in, "Which attack would you like to edit?", 1,attacks.length)];
         }
-        Attack attack = attacks[getInt (in, "Which attack would you like to edit?", 1,attacks.length)];
+
         switch (choice) {
             case 1: // name
                 attack.edit("name",getString(in,"Enter new name: ",true));
@@ -575,7 +591,6 @@ public class Driver {
                 cards.add(new Card (name, HP, type, thisCardDate,attacks));
             }
             albums.add(new Album(albumNum,cards,maxCapacity,albumDate));
-            albums.get(albums.size()-1).sortCardsByName();
         } catch (IOException e) {
             return "Reading Error";
         }

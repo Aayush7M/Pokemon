@@ -72,8 +72,14 @@ public class Album implements Comparable <Album> {
     public void removeCard (int index) {
         cards.remove(index);
     }
+    public void removeCards (int startIndex, int endIndex) {
+        cards.subList(startIndex, endIndex+1).clear();
+    }
     public int findCardGivenName (String name) {
         return Collections.binarySearch(cards, new Card(name));
+    }
+    public Card getCard (int index) {
+        return cards.get(index);
     }
     public int compareTo (Album a) {
         return (this.albumNum - a.albumNum);
