@@ -6,7 +6,7 @@ public class SortByHP implements Comparator <Card> {
         if ((hpDifference = a.getHP()-b.getHP()) == 0) {// same hp
             int nameDifference;
             if ((nameDifference = a.getName().compareToIgnoreCase(b.getName())) == 0) { // same name
-                return new SortByDate().compare(a,b);
+                return a.getName().compareToIgnoreCase(b.getName());
             } else {
                 return nameDifference;
             }
