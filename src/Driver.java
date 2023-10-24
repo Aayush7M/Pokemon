@@ -216,7 +216,7 @@ public class Driver {
             case 2:
                 albums.sort(new SortAlbumsByDate());
                 Date date = getAlbumDate(in,albums);
-                albums.subList(albums.indexOf(new Album (date)), albums.lastIndexOf(new Album (date))).clear();
+                albums.subList(albums.indexOf(new Album (date)), albums.lastIndexOf(new Album (date))+1).clear();
                 break;
         }
         albums.trimToSize();
