@@ -7,28 +7,7 @@ public class Card implements Comparable <Card> {
     private Date date;
     private Attack[] attacks;
 
-    public String getName () {
-        return name;
-    }
-    public int getHP () {
-        return HP;
-    }
-    public Date getDate () {
-        return date;
-    }
-    public Attack[] getAttacks () {
-        return attacks;
-    }
-    public String nameDateToString () {
-        return String.format ("Name: %s%nDate: %s%n",name,date);
-    }
-    public String toString() {
-        StringBuilder returnString = new StringBuilder(String.format("Name: %s%nHP: %d%nType: %s%nDate: %s%nAttacks: %n", name, HP, type, date));
-        for (Attack attack : attacks) {
-            returnString.append(attack.toString()).append("\n");
-        }
-        return returnString.toString();
-    }
+    // constructors
     public Card (String name, int HP, String type, Date date, Attack[] attacks) {
         this.name = name;
         this.HP = HP;
@@ -42,15 +21,49 @@ public class Card implements Comparable <Card> {
     public Card (int HP) {
         this.HP = HP;
     }
-    public int compareTo (Card c) {
-        int compareResult;
-        if ((compareResult = this.name.compareToIgnoreCase(c.name)) == 0) {
-            return new SortCardsByDate().compare(this, c);
-        } else {
-            return compareResult;
-        }
+
+    // getters
+    public String getName () {
+        return name;
     }
+    public int getHP () {
+        return HP;
+    }
+    public Date getDate () {
+        return date;
+    }
+    public Attack[] getAttacks () {
+        return attacks;
+    }
+
+    // method
     public void sortAttacks () {
         Arrays.sort(attacks);
+    }
+
+    // comparable
+    public int compareTo (Card c) {
+        int nameResult = new SortCardsByName().compare(this,c);
+        if (nameResult == 0) { // name is same
+            int dateResult = new SortCardsByDate().compare(this, c);
+            if (dateResult == 0) { // date is same
+                return new SortCardsByHP().compare(this, c); // check hp
+            } else {
+                return dateResult;
+            }
+        } else {
+            return nameResult;
+        }
+    }
+    // to string methods
+    public String nameDateToString () {
+        return String.format ("Name: %s%nDate: %s%n",name,date);
+    }
+    public String toString() {
+        StringBuilder returnString = new StringBuilder(String.format("Name: %s%nHP: %d%nType: %s%nDate: %s%nAttacks: %n", name, HP, type, date));
+        for (Attack attack : attacks) {
+            returnString.append(attack.toString()).append("\n");
+        }
+        return returnString.toString();
     }
 }

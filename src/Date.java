@@ -2,26 +2,21 @@ import java.time.MonthDay;
 import java.time.Year;
 import java.time.YearMonth;
 
-public class Date {
+public class Date implements Comparable <Date> {
     private final int month;
     private final int day;
     private final int year;
 
+    // constructor
     public Date (int[] parsedDate) {
         month = parsedDate[0];
         day = parsedDate[1];
         year = parsedDate[2];
 
     }
-    public int getMonth () {
-        return month;
-    }
-    public int getDay () {
-        return day;
-    }
-    public int getYear () {
-        return year;
-    }
+
+
+    // methods
     public static boolean validMonthDayYearTriplet (int[] parsedDate) {
         int month = parsedDate[0];
         int day = parsedDate[1];
@@ -50,11 +45,32 @@ public class Date {
         }
         return true;
     }
+
+    // to string
     public String toString () {
         return String.format("%02d/%02d/%d",month,day,year);
     }
+
+    //comparable
+    public int compareTo (Date d) {
+        int yearDifference;
+        if ((yearDifference = this.year-d.year)==0) {
+            int monthDifference;
+            if ((monthDifference = this.month-d.month)==0) {
+                return this.day-d.day;
+            } else {
+                return monthDifference;
+            }
+        } else {
+            return yearDifference;
+        }
+    }
+
+    // equals
     public boolean equals (Object o) {
-        Date d = (Date) o;
+        if (!(o instanceof Date d)) {
+            return false;
+        }
         return this.month == d.month && this.day == d.day && this.year == d.year;
     }
 }

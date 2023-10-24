@@ -2,17 +2,19 @@ public class Attack implements Comparable <Attack>{
     private String name;
     private String description;
     private String damage;
+
+    // constructor
     public Attack (String name, String description, String damage) {
         this.name = name;
         this.description = description;
         this.damage = damage;
     }
+    // to string
     public String toString () {
         return String.format("Name: %s%nDescription: %s%nDamage: %s%n",name,description,damage);
     }
-    public int compareTo (Attack a) {
-        return this.name.compareToIgnoreCase(a.name);
-    }
+
+    // method
     public void edit (String attributeToChange, String changeTo) {
         if (attributeToChange.equals("name")) {
             this.name = changeTo;
@@ -21,5 +23,10 @@ public class Attack implements Comparable <Attack>{
         } else { // damage
             this.damage = changeTo;
         }
+    }
+
+    // comparable
+    public int compareTo (Attack a) {
+        return this.name.compareToIgnoreCase(a.name);
     }
 }
