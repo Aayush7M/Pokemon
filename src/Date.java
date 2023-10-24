@@ -26,7 +26,7 @@ public class Date implements Comparable <Date> {
         if (month < 1 || month > 12 || year < 1 || year > currentYear) {
             return false;
         } else { // invalid day
-                                //JA, FE, MA, AP, MA, JN, JL, AU, SE, OC, NO, DE
+            //JA, FE, MA, AP, MA, JN, JL, AU, SE, OC, NO, DE
             int[] daysInMonths = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
             if (day > daysInMonths[month - 1] || day < 1) {
                 return false;
@@ -34,9 +34,9 @@ public class Date implements Comparable <Date> {
         }
         if (year == currentYear) { // year is the current year
             int currentMonth = YearMonth.now().getMonthValue();
-            if (month>currentMonth) { // month is in the future
+            if (month > currentMonth) { // month is in the future
                 return false;
-            } else if (month == currentMonth){ // month is the current month
+            } else if (month == currentMonth) { // month is the current month
                 // check if day is the current day or in the past
                 return day <= MonthDay.now().getDayOfMonth();
             } else { // month is in the past
@@ -48,16 +48,16 @@ public class Date implements Comparable <Date> {
 
     // to string
     public String toString () {
-        return String.format("%02d/%02d/%d",month,day,year);
+        return String.format("%02d/%02d/%d", month, day, year);
     }
 
     //comparable
     public int compareTo (Date d) {
         int yearDifference;
-        if ((yearDifference = this.year-d.year)==0) {
+        if ((yearDifference = this.year - d.year) == 0) {
             int monthDifference;
-            if ((monthDifference = this.month-d.month)==0) {
-                return this.day-d.day;
+            if ((monthDifference = this.month - d.month) == 0) {
+                return this.day - d.day;
             } else {
                 return monthDifference;
             }

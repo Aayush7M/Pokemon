@@ -15,9 +15,11 @@ public class Card implements Comparable <Card> {
         this.date = date;
         this.attacks = attacks;
     }
+
     public Card (String name) {
         this.name = name;
     }
+
     public Card (int HP) {
         this.HP = HP;
     }
@@ -26,12 +28,15 @@ public class Card implements Comparable <Card> {
     public String getName () {
         return name;
     }
+
     public int getHP () {
         return HP;
     }
+
     public Date getDate () {
         return date;
     }
+
     public Attack[] getAttacks () {
         return attacks;
     }
@@ -41,9 +46,16 @@ public class Card implements Comparable <Card> {
         Arrays.sort(attacks);
     }
 
+    public void printAttacks () {
+        for (int i = 0; i < attacks.length; i++) {
+            System.out.println((i + 1) + ": ");
+            System.out.println(attacks[i] + "\n");
+        }
+    }
+
     // comparable
     public int compareTo (Card c) {
-        int nameResult = new SortCardsByName().compare(this,c);
+        int nameResult = new SortCardsByName().compare(this, c);
         if (nameResult == 0) { // name is same
             int dateResult = new SortCardsByDate().compare(this, c);
             if (dateResult == 0) { // date is same
@@ -55,11 +67,13 @@ public class Card implements Comparable <Card> {
             return nameResult;
         }
     }
+
     // to string methods
     public String nameDateToString () {
-        return String.format ("Name: %s%nDate: %s%n",name,date);
+        return String.format("Name: %s%nDate: %s%n", name, date);
     }
-    public String toString() {
+
+    public String toString () {
         StringBuilder returnString = new StringBuilder(String.format("Name: %s%nHP: %d%nType: %s%nDate: %s%nAttacks: %n", name, HP, type, date));
         for (Attack attack : attacks) {
             returnString.append(attack.toString()).append("\n");

@@ -1,4 +1,4 @@
-public class Attack implements Comparable <Attack>{
+public class Attack implements Comparable <Attack> {
     private String name;
     private String description;
     private String damage;
@@ -9,9 +9,10 @@ public class Attack implements Comparable <Attack>{
         this.description = description;
         this.damage = damage;
     }
+
     // to string
     public String toString () {
-        return String.format("Name: %s%nDescription: %s%nDamage: %s%n",name,description,damage);
+        return String.format("Name: %s%nDescription: %s%nDamage: %s%n", name, description, damage);
     }
 
     // method

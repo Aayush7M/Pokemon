@@ -2,17 +2,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Album implements Comparable <Album> {
+    // static variables
+    private static int collectionNumOfCards;
+    private static int collectionCapacity;
+    private static int collectionHP;
     // instance variables
     private final int albumNum;
+    private final Date date;
     private ArrayList <Card> cards;
     private int maxCapacity;
-    private final Date date;
     private int albumHP;
-
-    // static variables
-    private static int totalNumOfCards;
-    private static int totalCapacity;
-    private static int totalHP;
 
     // constructors
     public Album (int albumNum, ArrayList <Card> cards, int maxCapacity, Date date) {
@@ -23,9 +22,9 @@ public class Album implements Comparable <Album> {
         for (Card card : cards) {
             this.albumHP += card.getHP();
         }
-        totalHP += albumHP;
-        totalNumOfCards += cards.size();
-        totalCapacity += maxCapacity;
+        collectionHP += albumHP;
+        collectionNumOfCards += cards.size();
+        collectionCapacity += maxCapacity;
     }
 
     public Album (int albumNum, Date date) {
@@ -33,10 +32,19 @@ public class Album implements Comparable <Album> {
         this.date = date;
     }
 
+    public static String averageHPOfCollection () {
+        return ("Average HP: " + ((double) collectionHP / collectionNumOfCards));
+    }
+
+    public static String cardsOutOfCapacityCollection () {
+        return (collectionNumOfCards + " cards out of " + collectionCapacity);
+    }
+
     // getters
     public Date getDate () {
         return date;
     }
+
     public ArrayList <Card> getCards () {
         return cards;
     }
@@ -45,15 +53,9 @@ public class Album implements Comparable <Album> {
     public String averageHP () { // average HP of THIS ALBUM
         return ("Average HP: " + ((double) albumHP / cards.size()));
     }
-    public static String averageHPOfCollection () {
-        return ("Average HP: " + ((double) totalHP / totalNumOfCards));
-    }
 
     public String cardsOutOfCapacity () { // cards inside this album as compared to max capacity of this album.
         return (cards.size() + " cards out of " + maxCapacity);
-    }
-    public static String cardsOutOfCapacityCollection () {
-        return (totalNumOfCards + " cards out of " + totalCapacity);
     }
 
     public void printNameDateAllCards () {
@@ -71,15 +73,17 @@ public class Album implements Comparable <Album> {
 
     public void addCard (Card c) {
         cards.add(c);
-        albumHP += c.getHP();
-        totalHP += albumHP;
-        totalNumOfCards++;
+        int thisCardHP = c.getHP();
+        albumHP += thisCardHP;
+        collectionHP += thisCardHP;
+        collectionNumOfCards++;
     }
+
     public void removeCard (int index) {
-        totalNumOfCards--;
+        collectionNumOfCards--;
         int thisCardHP = cards.get(index).getHP();
-        totalHP-=thisCardHP;
-        albumHP-=thisCardHP;
+        collectionHP -= thisCardHP;
+        albumHP -= thisCardHP;
         cards.remove(index);
 
     }
@@ -99,6 +103,7 @@ public class Album implements Comparable <Album> {
     public int getCardIndexOfName (String name) {
         return cards.indexOf(new Card(name));
     }
+
     public int getCardIndexOfHP (int hp) {
         return cards.indexOf(new Card(hp));
     }

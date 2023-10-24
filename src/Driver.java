@@ -10,9 +10,9 @@ public class Driver {
         System.out.println("Welcome!");
         ArrayList <Album> albums = new ArrayList <>();
         try {
-            BufferedReader inFile = new BufferedReader(new FileReader("album1.txt"));
+            BufferedReader inFile = new BufferedReader(new FileReader("1.txt"));
             System.out.println(readFile(inFile, albums));
-            inFile = new BufferedReader(new FileReader("album5.txt"));
+            inFile = new BufferedReader(new FileReader("2.txt"));
             System.out.println(readFile(inFile, albums));
         } catch (IOException ignored) {
         }
@@ -207,7 +207,7 @@ public class Driver {
     }
 
     public static int getAlbumIndex (Scanner in, ArrayList <Album> albums) {
-        return albums.indexOf(new Album(getAlbumNum(in, albums),new Date(new int[] {-1,-1,-1})));
+        return albums.indexOf(new Album(getAlbumNum(in, albums), new Date(new int[]{-1, -1, -1})));
     }
 
     public static int getAlbumNum (Scanner in, ArrayList <Album> albums) {
@@ -230,12 +230,12 @@ public class Driver {
         printNameDateAllAlbums(albums);
         switch (choice) {
             case 1:
-                albums.remove(new Album(getAlbumNum(in, albums),new Date(new int[] {-1,-1,-1})));
+                albums.remove(new Album(getAlbumNum(in, albums), new Date(new int[]{-1, -1, -1})));
                 break;
             case 2:
                 albums.sort(new SortAlbumsByDate());
                 Date date = getAlbumDate(in, albums);
-                albums.subList(albums.indexOf(new Album(-1,date)), albums.lastIndexOf(new Album(-1,date)) + 1).clear();
+                albums.subList(albums.indexOf(new Album(-1, date)), albums.lastIndexOf(new Album(-1, date)) + 1).clear();
                 break;
         }
         albums.trimToSize();
@@ -322,10 +322,7 @@ public class Driver {
             System.out.println("This card only has one attack. So, it has been automatically chosen.");
             attack = attacks[0];
         } else {
-            for (int i = 0; i < attacks.length; i++) {
-                System.out.println((i + 1) + ": ");
-                System.out.println(attacks[i] + "\n");
-            }
+            card.printAttacks();
             attack = attacks[getInt(in, "Which attack would you like to edit?", 1, attacks.length)];
         }
         int choice = displayMenu(in, 5);
@@ -577,11 +574,11 @@ public class Driver {
     }
 
     public static boolean duplicateAlbumNum (int albumNum, ArrayList <Album> albums) {
-        return albums.contains(new Album(albumNum,new Date (new int[] {-1,-1,-1})));
+        return albums.contains(new Album(albumNum, new Date(new int[]{-1, -1, -1})));
     }
 
     public static boolean duplicateAlbumDate (Date date, ArrayList <Album> albums) {
-        return albums.contains(new Album(-1,date));
+        return albums.contains(new Album(-1, date));
     }
 
     public static int[] parseDate (String date) {
