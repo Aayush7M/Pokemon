@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Album implements Comparable <Album> {
-    private final int albumNum;
+    private int albumNum;
     private ArrayList <Card> cards;
     private int maxCapacity;
     private Date date;
@@ -26,6 +26,14 @@ public class Album implements Comparable <Album> {
     public Album (int albumNum) {
         this.albumNum = albumNum;
     }
+    public Album (Date date) {
+        this.date = date;
+    }
+
+    public Date getDate () {
+        return date;
+    }
+
     public String averageHP () { // average HP of THIS ALBUM
         return ("Average HP: " + ((double) albumHP /cards.size()));
     }
@@ -58,30 +66,26 @@ public class Album implements Comparable <Album> {
         albumHP += c.getHP();
         totalHP += albumHP;
         totalNumOfCards++;
-        Collections.sort(cards);
     }
     public void sortCardsByName () {
         Collections.sort(cards);
     }
+
+    public int getAlbumNum () {
+        return albumNum;
+    }
+
     public void sortCardsByHP () {
         cards.sort(new SortByHP());
     }
     public void sortCardsByDate () {
-        cards.sort(new SortByDate());
+        cards.sort(new SortCardsByDate());
     }
     public void removeCard (int index) {
         cards.remove(index);
     }
-    public void removeCards (int startIndex, int endIndex) {
-        cards.subList(startIndex, endIndex).clear();
-    }
-    public int getCardOfName (String name, boolean firstCard) {
-        if (firstCard) {
-            return cards.indexOf(new Card(name));
-        } else {
-            return cards.lastIndexOf(new Card(name));
-        }
-
+    public int getCardIndexOfName (String name) {
+        return cards.indexOf(new Card(name));
     }
     public Card getCard (int index) {
         return cards.get(index);
@@ -102,14 +106,20 @@ public class Album implements Comparable <Album> {
     public boolean atMaxCapacity () {
         return cards.size() == maxCapacity;
     }
-    public int getCardOfHP (int hp, boolean firstCard) {
-        if (firstCard) {
-            return cards.indexOf(new Card(hp));
-        } else {
-            return cards.lastIndexOf(new Card(hp));
-        }
+    public int getCardOfHP (int hp) {
+        return cards.indexOf(new Card(hp));
     }
     public String nameDateToString () {
         return String.format ("Album Number: %d%nDate: %s%n",albumNum,date);
+    }
+
+    public boolean equals (Object o) {
+        Album a = (Album) o;
+        if (this.getDate() == null || a.getDate() == null) {
+            return this.getAlbumNum() == a.getAlbumNum();
+        } else {
+            return this.getDate().equals(a.getDate()) || this.getAlbumNum() == a.getAlbumNum();
+        }
+
     }
 }

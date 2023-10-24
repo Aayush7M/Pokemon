@@ -1,6 +1,6 @@
 import java.util.Comparator;
 
-public class SortByDate implements Comparator <Card> {
+public class SortCardsByDate implements Comparator <Card> {
     public int compare (Card a, Card b) {
         if (a.getDate() == null || b.getDate() == null) {
             return 0;

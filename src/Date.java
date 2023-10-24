@@ -53,4 +53,8 @@ public class Date {
     public String toString () {
         return String.format("%02d/%02d/%d",month,day,year);
     }
+    public boolean equals (Object o) {
+        Date d = (Date) o;
+        return this.month == d.month && this.day == d.day && this.year == d.year;
+    }
 }

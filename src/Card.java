@@ -45,7 +45,7 @@ public class Card implements Comparable <Card> {
     public int compareTo (Card c) {
         int compareResult;
         if ((compareResult = this.name.compareToIgnoreCase(c.name)) == 0) {
-            return new SortByDate().compare(this, c);
+            return new SortCardsByDate().compare(this, c);
         } else {
             return compareResult;
         }
