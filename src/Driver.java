@@ -233,9 +233,15 @@ public class Driver {
                 albums.remove(new Album(getAlbumNum(in, albums), new Date(new int[]{-1, -1, -1})));
                 break;
             case 2:
-                albums.sort(new SortAlbumsByDate());
                 Date date = getAlbumDate(in, albums);
-                albums.subList(albums.indexOf(new Album(-1, date)), albums.lastIndexOf(new Album(-1, date)) + 1).clear();
+                int indexToRemove;
+                for (int i = 0; i < albums.size(); i++) {
+                    if ((indexToRemove = albums.indexOf(new Album(-1,date))) > -1) {
+                        albums.remove(indexToRemove);
+                    } else {
+                        break;
+                    }
+                }
                 break;
         }
         albums.trimToSize();
@@ -290,6 +296,8 @@ public class Driver {
                 for (int i = firstIndexOfName; i < currentAlbum.getCardsSize(); i++) {
                     if ((indexToRemove = currentAlbum.getCards().indexOf(new Card(name))) > -1) {
                         currentAlbum.removeCard(indexToRemove);
+                    } else {
+                        break;
                     }
                 }
                 break;
@@ -303,6 +311,8 @@ public class Driver {
                 for (int i = firstIndexOfHP; i < currentAlbum.getCardsSize(); i++) {
                     if ((indexToRemove = currentAlbum.getCards().indexOf(new Card(hp))) > -1) {
                         currentAlbum.removeCard(indexToRemove);
+                    } else {
+                        break;
                     }
                 }
                 break;
