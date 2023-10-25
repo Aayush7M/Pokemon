@@ -26,7 +26,7 @@ public class Date implements Comparable <Date> {
         if (month < 1 || month > 12 || year < 1 || year > currentYear) {
             return false;
         } else { // invalid day
-            //JA, FE, MA, AP, MA, JN, JL, AU, SE, OC, NO, DE
+                                //JA, FE, MA, AP, MA, JN, JL, AU, SE, OC, NO, DE
             int[] daysInMonths = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
             if (day > daysInMonths[month - 1] || day < 1) {
                 return false;

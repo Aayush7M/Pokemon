@@ -1,8 +1,8 @@
 import java.util.Arrays;
 
 public class Card implements Comparable <Card> {
-    private String name;
-    private int HP;
+    private final String name;
+    private final int HP;
     private String type;
     private Date date;
     private Attack[] attacks;
@@ -16,11 +16,8 @@ public class Card implements Comparable <Card> {
         this.attacks = attacks;
     }
 
-    public Card (String name) {
+    public Card (String name, int HP) {
         this.name = name;
-    }
-
-    public Card (int HP) {
         this.HP = HP;
     }
 
@@ -79,5 +76,13 @@ public class Card implements Comparable <Card> {
             returnString.append(attack.toString()).append("\n");
         }
         return returnString.toString();
+    }
+    // equals method
+    public boolean equals (Object o) {
+        if (!(o instanceof Card c)) {
+            return false;
+        }
+        return this.name.equalsIgnoreCase(c.name) || this.HP == c.HP;
+
     }
 }
