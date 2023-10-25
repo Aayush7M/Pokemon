@@ -52,14 +52,14 @@ public class Album implements Comparable <Album> {
         return String.format("Collection Statistics: %n\t\t%d cards out of %d%n\t\tAverage HP: %f%n",
                 collectionNumOfCards,
                 collectionCapacity,
-                ((double) collectionHP / collectionNumOfCards));
+                ((double) collectionHP / ((collectionNumOfCards==0)?1:collectionNumOfCards)));
     }
     public String albumStatistics () { // average HP of THIS ALBUM
         return String.format("Album %d Statistics: %n\t\t%d cards out of %d%n\t\tAverage HP: %f%n",
                 albumNum,
                 cards.size(),
                 maxCapacity,
-                ((double) albumHP / cards.size()));
+                ((double) albumHP / ((cards.isEmpty())?1:cards.size())));
     }
 
     public void printNameDateAllCards () {

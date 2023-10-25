@@ -11,13 +11,15 @@ public class Driver {
         ArrayList <Album> albums = new ArrayList <>();
         try {
             BufferedReader inFile = new BufferedReader(new FileReader("1.txt"));
-            System.out.println(readFile(inFile, albums));
-            inFile = new BufferedReader(new FileReader("2.txt"));
-            System.out.println(readFile(inFile, albums));
+            readFile(inFile, albums);
+//            inFile = new BufferedReader(new FileReader("2.txt"));
+//            readFile(inFile, albums);
             inFile = new BufferedReader(new FileReader("3.txt"));
-            System.out.println(readFile(inFile, albums));
-            inFile = new BufferedReader(new FileReader("4.txt"));
-            System.out.println(readFile(inFile, albums));
+            readFile(inFile, albums);
+//            inFile = new BufferedReader(new FileReader("4.txt"));
+//            readFile(inFile, albums);
+            inFile = new BufferedReader(new FileReader("5.txt"));
+            readFile(inFile, albums);
         } catch (IOException ignored) {
         }
         Scanner in = new Scanner(System.in);
@@ -35,6 +37,7 @@ public class Driver {
             }
         }
         System.out.println("Goodbye!");
+        in.close();
     }
 
     public static int displayMenu (Scanner in, int menuNum) {
@@ -96,8 +99,18 @@ public class Driver {
     public static void albumMenu (Scanner in, ArrayList <Album> albums) {
         int choice;
         while ((choice = displayMenu(in, 1)) != 6) {
-            if (choice != 3 && albums.isEmpty()) {
-                choice = 7;
+            int numOfAlbumsImported = albums.size();
+            if (choice!=3){ // user does not want to add cards
+                if (numOfAlbumsImported == 0) { // if no albums are imported
+                    choice = 6;
+                } else if (numOfAlbumsImported == 1) { // if only one album imported
+                    if (choice != 5) {
+                        System.out.println("Only one album imported, so that album has been automatically chosen");
+                    }
+                    if (choice == 4) {
+                        choice = 7; // remove only album
+                    }
+                }
             }
             switch (choice) {
                 case 1: // Display a list of all albums
@@ -115,8 +128,12 @@ public class Driver {
                 case 5: // Show statistics
                     printStatistics(albums);
                     break;
-                case 7:
+                case 6:
                     System.out.println("There are no albums imported.");
+                    break;
+                case 7:
+                    albums.get(0).removeAlbum();
+                    albums.remove(0);
             }
         }
     }
@@ -128,70 +145,51 @@ public class Driver {
         }
         int choice;
         printAllAlbums(albums);
-        Album currentAlbum = albums.get(getAlbumIndex(in, albums));
+        Album currentAlbum = albums.get(getAlbumIndexFromNum(in, albums));
         while ((choice = displayMenu(in, 2)) != 7) {
             int numOfCardsInAlbum = currentAlbum.getCardsSize();
-            if (choice != 3 && numOfCardsInAlbum == 0) {
-                choice = 7;
-            } // if empty album and user doesn't want to add cards
-            if (numOfCardsInAlbum == 1) {
-                if (choice !=3) {
-                    System.out.println("Only one card in album, so that card has been automatically chosen");
+            if (choice!=3){ // user does not want to add cards
+                if (numOfCardsInAlbum == 0) { // if empty album and user doesn't want to add cards
+                    choice = 7;
+                } else if (numOfCardsInAlbum == 1) { // if only one card in album
+                    if (choice != 6) {
+                        System.out.println("Only one card in album, so that card has been automatically chosen");
+                    }
+                    switch (choice) {
+                        case 1 -> choice = 8; // User wants card name/date
+                        case 2 -> choice = 9; // User wants card all info
+                        case 4 -> choice = 10; // Remove only card
+                        case 5 -> choice = 11; // Edit only card
+                        case 6 -> choice = 12; // Sorting won't do anything
+                    }
                 }
-                if (choice == 1) {
-                    choice = 8;
-                } // User wants card name/date
-                if (choice == 2) {
-                    choice = 9;
-                } // User wants card all info
-                if (choice == 4) {
-                    choice = 10;
-                } // Remove only card
-                if (choice == 5) {
-                    choice = 11;
-                } // Edit only card
-                if (choice == 6) {
-                    choice = 12;
-                } // Sorting won't do anything
             }
             switch (choice) {
-                case 1: // Display all cards (in the last sorted order)
+                case 1 -> // Display all cards (in the last sorted order)
                     currentAlbum.printNameDateAllCards(); // prints the name and date
-                    break;
-                case 2: // Display info on a particular card
+                case 2 -> // Display info on a particular card
                     System.out.println(getExistingCard(in, currentAlbum));
-                    break;
-                case 3: // Add a card
+                case 3 -> // Add a card
                     addCard(in, currentAlbum);
-                    break;
-                case 4: // Remove a card (4 options)
+                case 4 -> // Remove a card (4 options)
                     removeCard(displayMenu(in, 4), in, currentAlbum);
-                    break;
-                case 5: // Edit attack
+                case 5 -> // Edit attack
                     editAttack(in, getExistingCard(in, currentAlbum));
-                    break;
-                case 6: // Sort cards (3 options)
+                case 6 -> // Sort cards (3 options)
                     sortCards(displayMenu(in, 6), currentAlbum);
-                    break;
-                case 7:
+                case 7 ->
                     System.out.println("There are no cards in album");
-                    break;
-                case 8: // name date of only card
+                case 8 -> // name date of only card
                     System.out.println(currentAlbum.getCard(0).nameDateToString());
-                    break;
-                case 9: // all info of only card
+                case 9 -> // all info of only card
                     System.out.println(currentAlbum.getCard(0));
-                    break;
-                case 10: // remove only card
+                case 10 -> // remove only card
                     currentAlbum.removeCard(0);
-                    break;
-                case 11:
+                case 11 ->
                     editAttack(in, currentAlbum.getCard(0));
-                    break;
-                case 12:
+                case 12 ->
                     System.out.println("Since there is only one card, output will the same no matter which method of " +
-                            "sorting is chosen. Here is the card: ");
-                    System.out.println(currentAlbum.getCard(0));
+                            "sorting is chosen. Here is the card: \n"+currentAlbum.getCard(0));
             }
         }
     }
@@ -210,10 +208,10 @@ public class Driver {
 
     public static void printAlbum (Scanner in, ArrayList <Album> albums) {
         printNameDateAllAlbums(albums);
-        System.out.println(albums.get(getAlbumIndex(in, albums)));
+        System.out.println(albums.get(getAlbumIndexFromNum(in, albums)));
     }
 
-    public static int getAlbumIndex (Scanner in, ArrayList <Album> albums) {
+    public static int getAlbumIndexFromNum (Scanner in, ArrayList <Album> albums) {
         return albums.indexOf(new Album(getAlbumNum(in, albums), new Date(new int[]{-1, -1, -1})));
     }
 
@@ -237,20 +235,16 @@ public class Driver {
         printNameDateAllAlbums(albums);
         switch (choice) {
             case 1:
-                int inputtedAlbumNum = getAlbumNum(in, albums);
-                albums.get(inputtedAlbumNum).removeAlbum();
-                albums.remove(new Album(inputtedAlbumNum, new Date(new int[]{-1, -1, -1})));
+                int index = getAlbumIndexFromNum(in,albums);
+                albums.get(index).removeAlbum();
+                albums.remove(index);
                 break;
             case 2:
                 Date date = getAlbumDate(in, albums);
                 int indexToRemove;
-                for (int i = 0; i < albums.size(); i++) {
-                    if ((indexToRemove = albums.indexOf(new Album(-1,date))) > -1) {
-                        albums.get(i).removeAlbum();
-                        albums.remove(indexToRemove);
-                    } else {
-                        break;
-                    }
+                while ((indexToRemove = albums.indexOf(new Album(-1,date))) > -1) {
+                    albums.get(indexToRemove).removeAlbum();
+                    albums.remove(indexToRemove);
                 }
                 break;
         }
@@ -258,11 +252,11 @@ public class Driver {
     }
 
     public static Date getAlbumDate (Scanner in, ArrayList <Album> albums) {
-        Date albumNumEntered;
-        while (!duplicateAlbumDate(albumNumEntered = getDate(in, "Enter the date of the album you are looking for"), albums)) {
+        Date date;
+        while (!duplicateAlbumDate(date = getDate(in, "Enter the date of the album you are looking for"), albums)) {
             System.out.println("invalid album date");
         }
-        return albumNumEntered;
+        return date;
     }
 
     public static void printStatistics (ArrayList <Album> albums) {
@@ -296,7 +290,7 @@ public class Driver {
         int indexToRemove;
         boolean validCard = false;
         switch (choice) {
-            case 1: // sort by name, remove
+            case 1: // remove all cards with name
                 int firstIndexOfName;
                 String name;
                 do {
@@ -315,8 +309,7 @@ public class Driver {
                     }
                 }
                 break;
-            case 2: // sort by HP, remove
-                currentAlbum.sortCardsByHP();
+            case 2: // remove all cards with hp
                 int firstIndexOfHP;
                 int hp;
                 do {
@@ -326,7 +319,7 @@ public class Driver {
                     } else {
                         System.out.println("invalid card hp");
                     }
-                } while (validCard);
+                } while (!validCard);
                 for (int i = firstIndexOfHP; i < currentAlbum.getCardsSize(); i++) {
                     if ((indexToRemove = currentAlbum.getCardIndexOfHP(hp)) > -1) {
                         currentAlbum.removeCard(indexToRemove);
@@ -553,7 +546,7 @@ public class Driver {
                 String fileName = in.nextLine();
                 BufferedReader inFile = new BufferedReader(new FileReader(fileName + ".txt"));
                 validFileName = true;
-                System.out.println(readFile(inFile, albums));
+                readFile(inFile, albums);
                 inFile.close();
             } catch (FileNotFoundException e) {
                 System.out.println("File Not Found\n");
@@ -564,11 +557,12 @@ public class Driver {
 
     }
 
-    public static String readFile (BufferedReader inFile, ArrayList <Album> albums) {
+    public static void readFile (BufferedReader inFile, ArrayList <Album> albums) {
         try {
             int albumNum;
             if (duplicateAlbumNum(albumNum = Integer.parseInt(inFile.readLine().trim()), albums)) {
-                return "This is a duplicate album";
+                System.out.println("This is a duplicate album");
+                return;
             }
             Date albumDate = new Date(parseDate(inFile.readLine().trim()));
             int maxCapacity = Integer.parseInt(inFile.readLine().trim());
@@ -597,9 +591,10 @@ public class Driver {
             }
             albums.add(new Album(albumNum, cards, maxCapacity, albumDate));
         } catch (IOException e) {
-            return "Reading Error";
+            System.out.println("Reading Error");
+            return;
         }
-        return "Album import successful!";
+        System.out.println("Album import successful!");
     }
 
     public static boolean duplicateAlbumNum (int albumNum, ArrayList <Album> albums) {
