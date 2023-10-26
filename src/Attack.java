@@ -12,7 +12,10 @@ public class Attack implements Comparable <Attack> {
 
     // to string
     public String toString () {
-        return String.format("Name: %s%nDescription: %s%nDamage: %s%n", name, description, damage);
+        return String.format("Name: %s%nDescription: %s%nDamage: %s", name, description, damage);
+    }
+    public String tabbedToString () {
+        return String.format("\t\tName: %s%n\t\tDescription: %s%n\t\tDamage: %s", name, description, damage);
     }
 
     // method

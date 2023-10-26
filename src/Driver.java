@@ -10,16 +10,11 @@ public class Driver {
         System.out.println("Welcome!");
         ArrayList <Album> albums = new ArrayList <>();
         try {
-            BufferedReader inFile = new BufferedReader(new FileReader("1.txt"));
-            readFile(inFile, albums);
-//            inFile = new BufferedReader(new FileReader("2.txt"));
-//            readFile(inFile, albums);
-            inFile = new BufferedReader(new FileReader("3.txt"));
-            readFile(inFile, albums);
-//            inFile = new BufferedReader(new FileReader("4.txt"));
-//            readFile(inFile, albums);
-            inFile = new BufferedReader(new FileReader("5.txt"));
-            readFile(inFile, albums);
+//            readFile(new BufferedReader(new FileReader("1.txt")), albums);
+//            readFile(new BufferedReader(new FileReader("2.txt")), albums);
+//            readFile(new BufferedReader(new FileReader("3.txt")), albums);
+            readFile(new BufferedReader(new FileReader("4.txt")), albums);
+//            readFile(new BufferedReader(new FileReader("5.txt")), albums);
         } catch (IOException ignored) {
         }
         Scanner in = new Scanner(System.in);
@@ -104,11 +99,12 @@ public class Driver {
                 if (numOfAlbumsImported == 0) { // if no albums are imported
                     choice = 6;
                 } else if (numOfAlbumsImported == 1) { // if only one album imported
-                    if (choice != 5) {
+                    if (choice != 1 && choice !=5) { // user doesn't want to print all albums or add cards
                         System.out.println("Only one album imported, so that album has been automatically chosen");
                     }
-                    if (choice == 4) {
-                        choice = 7; // remove only album
+                    switch (choice) {
+                        case 2 -> choice = 7;
+                        case 4 -> choice = 8;
                     }
                 }
             }
@@ -132,6 +128,9 @@ public class Driver {
                     System.out.println("There are no albums imported.");
                     break;
                 case 7:
+                    System.out.println(albums.get(0));
+                    break;
+                case 8:
                     albums.get(0).removeAlbum();
                     albums.remove(0);
             }
@@ -139,28 +138,32 @@ public class Driver {
     }
 
     public static void cardMenu (Scanner in, ArrayList <Album> albums) {
+        int choice;
+        Album currentAlbum;
         if (albums.isEmpty()) {
             System.out.println("There are no albums imported.");
             return;
+        } else if (albums.size()==1) {
+            System.out.println("Only one album imported, so that album has been automatically chosen");
+            currentAlbum = albums.get(0);
+        } else {
+            printAllAlbums(albums);
+            currentAlbum = albums.get(getAlbumIndexFromNum(in, albums));
         }
-        int choice;
-        printAllAlbums(albums);
-        Album currentAlbum = albums.get(getAlbumIndexFromNum(in, albums));
         while ((choice = displayMenu(in, 2)) != 7) {
             int numOfCardsInAlbum = currentAlbum.getCardsSize();
             if (choice!=3){ // user does not want to add cards
                 if (numOfCardsInAlbum == 0) { // if empty album and user doesn't want to add cards
                     choice = 7;
                 } else if (numOfCardsInAlbum == 1) { // if only one card in album
-                    if (choice != 6) {
+                    if (choice != 1 && choice != 6) { // doesn't want to print all cards or sort.
                         System.out.println("Only one card in album, so that card has been automatically chosen");
                     }
                     switch (choice) {
-                        case 1 -> choice = 8; // User wants card name/date
-                        case 2 -> choice = 9; // User wants card all info
-                        case 4 -> choice = 10; // Remove only card
-                        case 5 -> choice = 11; // Edit only card
-                        case 6 -> choice = 12; // Sorting won't do anything
+                        case 2 -> choice = 8; // User wants card all info
+                        case 4 -> choice = 9; // Remove only card
+                        case 5 -> choice = 10; // Edit only card
+                        case 6 -> choice = 11; // Sorting won't do anything
                     }
                 }
             }
@@ -179,15 +182,13 @@ public class Driver {
                     sortCards(displayMenu(in, 6), currentAlbum);
                 case 7 ->
                     System.out.println("There are no cards in album");
-                case 8 -> // name date of only card
-                    System.out.println(currentAlbum.getCard(0).nameDateToString());
-                case 9 -> // all info of only card
+                case 8 -> // all info of only card
                     System.out.println(currentAlbum.getCard(0));
-                case 10 -> // remove only card
+                case 9 -> // remove only card
                     currentAlbum.removeCard(0);
-                case 11 ->
+                case 10 ->
                     editAttack(in, currentAlbum.getCard(0));
-                case 12 ->
+                case 11 ->
                     System.out.println("Since there is only one card, output will the same no matter which method of " +
                             "sorting is chosen. Here is the card: \n"+currentAlbum.getCard(0));
             }
