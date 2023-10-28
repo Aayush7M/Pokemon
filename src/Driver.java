@@ -11,18 +11,18 @@ public class Driver {
         ArrayList <Album> albums = new ArrayList <>();
         try {
 //            readFile(new BufferedReader(new FileReader("1.txt")), albums);
-//            readFile(new BufferedReader(new FileReader("2.txt")), albums);
+            readFile(new BufferedReader(new FileReader("2.txt")), albums);
 //            readFile(new BufferedReader(new FileReader("3.txt")), albums);
             readFile(new BufferedReader(new FileReader("4.txt")), albums);
-//            readFile(new BufferedReader(new FileReader("5.txt")), albums);
+            readFile(new BufferedReader(new FileReader("5.txt")), albums);
         } catch (IOException ignored) {
         }
         Scanner in = new Scanner(System.in);
-//        if (getChar(in, "Would you like to add an album?") == 'y') {
-//            do {
-//                importAlbum(in, albums);
-//            } while (getChar(in, "Would you like to add more albums?") == 'y');
-//        }
+/*        if (getChar(in, "Would you like to add an album?") == 'y') {
+            do {
+                importAlbum(in, albums);
+            } while (getChar(in, "Would you like to add more albums?") == 'y');
+        }*/
 
         int mainMenuChoice;
         while ((mainMenuChoice = displayMenu(in, 0)) != 3) { // loop until exit
@@ -218,7 +218,7 @@ public class Driver {
 
     public static int getAlbumNum (Scanner in, ArrayList <Album> albums) {
         int albumNumEntered;
-        while (!duplicateAlbumNum(albumNumEntered = getInt(in, "Enter the number of the album you are looking for", 1, 0), albums)) {
+        while (!duplicateAlbumNum(albumNumEntered = getInt(in, "Enter the number of the album you are looking for", 1, Integer.MAX_VALUE), albums)) {
             System.out.println("invalid album number");
         }
         return albumNumEntered;
@@ -242,10 +242,12 @@ public class Driver {
                 break;
             case 2:
                 Date date = getAlbumDate(in, albums);
-                int indexToRemove;
-                while ((indexToRemove = albums.indexOf(new Album(-1,date))) > -1) {
-                    albums.get(indexToRemove).removeAlbum();
-                    albums.remove(indexToRemove);
+                for (int i = 0; i < albums.size(); i++) {
+                    if (albums.get(i).getDate().equals(date)) {
+                        albums.get(i).removeAlbum();
+                        albums.remove(i);
+                        i--;
+                    }
                 }
                 break;
         }
@@ -288,8 +290,8 @@ public class Driver {
     }
 
     public static void removeCard (int choice, Scanner in, Album currentAlbum) {
-        int indexToRemove;
         boolean validCard = false;
+        ArrayList <Card> cards = currentAlbum.getCards();
         switch (choice) {
             case 1: // remove all cards with name
                 int firstIndexOfName;
@@ -303,10 +305,9 @@ public class Driver {
                     }
                 } while (!validCard);
                 for (int i = firstIndexOfName; i < currentAlbum.getCardsSize(); i++) {
-                    if ((indexToRemove = currentAlbum.getCardIndexOfName(name)) > -1) {
-                        currentAlbum.removeCard(indexToRemove);
-                    } else {
-                        break;
+                    if (cards.get(i).getName().equalsIgnoreCase(name)) {
+                        currentAlbum.removeCard(i);
+                        i--;
                     }
                 }
                 break;
@@ -322,10 +323,9 @@ public class Driver {
                     }
                 } while (!validCard);
                 for (int i = firstIndexOfHP; i < currentAlbum.getCardsSize(); i++) {
-                    if ((indexToRemove = currentAlbum.getCardIndexOfHP(hp)) > -1) {
-                        currentAlbum.removeCard(indexToRemove);
-                    } else {
-                        break;
+                    if (cards.get(i).getHP()==hp){
+                        currentAlbum.removeCard(i);
+                        i--;
                     }
                 }
                 break;
@@ -544,7 +544,7 @@ public class Driver {
         while (!validFileName) {
             try {
                 System.out.print("Please provide the name of the input file (WITHOUT FILE EXTENSION): ");
-                String fileName = in.nextLine();
+                String fileName = in.nextLine().trim();
                 BufferedReader inFile = new BufferedReader(new FileReader(fileName + ".txt"));
                 validFileName = true;
                 readFile(inFile, albums);
