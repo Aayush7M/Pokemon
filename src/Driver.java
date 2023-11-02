@@ -10,7 +10,7 @@ public class Driver {
         System.out.println("Welcome!");
         ArrayList <Album> albums = new ArrayList <>();
         try {
-//            readFile(new BufferedReader(new FileReader("1.txt")), albums);
+            readFile(new BufferedReader(new FileReader("1.txt")), albums);
             readFile(new BufferedReader(new FileReader("2.txt")), albums);
 //            readFile(new BufferedReader(new FileReader("3.txt")), albums);
             readFile(new BufferedReader(new FileReader("4.txt")), albums);
@@ -18,11 +18,6 @@ public class Driver {
         } catch (IOException ignored) {
         }
         Scanner in = new Scanner(System.in);
-/*        if (getChar(in, "Would you like to add an album?") == 'y') {
-            do {
-                importAlbum(in, albums);
-            } while (getChar(in, "Would you like to add more albums?") == 'y');
-        }*/
 
         int mainMenuChoice;
         while ((mainMenuChoice = displayMenu(in, 0)) != 3) { // loop until exit
@@ -441,45 +436,6 @@ public class Driver {
         } while (!validAnswer);
 
         return validInt;
-    }
-
-    public static char getChar (Scanner in, String message) {
-        String fullInput = "?"; // stores the original input from the user
-        char charInput = '?'; // stores the user's character response
-        boolean validAnswer;
-        do {
-            try {
-                System.out.print(message + ": ");
-                fullInput = in.nextLine().toLowerCase();
-
-                if (fullInput.length() > 1) { // the input is too long (more than one character)
-                    fullInput = "1";
-                    throw new IOException();
-                } else if (fullInput.isEmpty()) { //input length 0
-                    fullInput = "2";
-                    throw new IOException();
-                } else if (!(fullInput.equals("y") || fullInput.equals("n"))) {
-                    fullInput = "3";
-                    throw new IOException();
-                }
-                charInput = fullInput.charAt(0);
-
-                validAnswer = true;
-            } catch (IOException e) {
-                switch (fullInput) {
-                    case "1" ->  // input too long
-                            System.out.print("ERROR! Your response was more than one character. ");
-                    case "2" ->  // input length 0
-                            System.out.print("ERROR! You did not provide a response. ");
-                    case "3" -> // input is not y or n
-                            System.out.print("ERROR! Your response was not 'y' nor was it 'n'. ");
-                }
-                System.out.println("Please enter a valid character!");
-                fullInput = "?";
-                validAnswer = false;
-            }
-        } while (!validAnswer);
-        return charInput;
     }
 
     public static Date getDate (Scanner in, String message) {
