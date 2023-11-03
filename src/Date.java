@@ -48,7 +48,7 @@ public class Date implements Comparable <Date> {
 
     // to string
     public String toString () {
-        return String.format("%02d/%02d/%d", month, day, year);
+        return String.format("%02d/%02d/%04d", month, day, year);
     }
 
     //comparable
