@@ -379,7 +379,7 @@ public class Driver {
         do {
             try {
                 System.out.print(message + ": ");
-                inputString = in.nextLine().trim().toLowerCase();
+                inputString = in.nextLine().trim();
 
                 if (inputString.isEmpty() && emptyInputForbidden) { //input length 0 chars
                     throw new IOException();
